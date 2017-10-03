@@ -9,6 +9,8 @@
             <th>Started</th>
             <th>From</th>
             <th>To</th>
+            <th>Parent PID</th>
+            <th>Parent</th>
             <th>Progress</th>
             <th>Action</th>
           </tr>
@@ -19,11 +21,14 @@
             <td>{{ item.started }}</td>
             <td>{{ item.from }}</td>
             <td>{{ item.to }}</td>
+            <td>{{ item.ppid }}</td>
+            <td>{{ item.parent }}</td>
             <td>
               <progress class="progress is-primary is-large" v-bind:value="item.progress" max="100">{{ item.progress }}%</progress>
             </td>
             <td>
-              <button class="button is-primary" v-on:click="pause(item.pid)">Pause</button>
+              <button v-if="item.status == 'sleeping'" class="button is-primary" v-on:click="pause(item.pid)">Pause</button>
+              <button v-if="item.status == 'stopped'" class="button is-primary" v-on:click="resume(item.pid)">Resume</button>
               <button class="button is-danger">Stop</button>
             </td>
           </tr>
@@ -48,14 +53,29 @@ export default {
       axios.get('http://localhost:8888/activity')
         .then((response) => {
           this.items = response.data.data
+          if (this.items.length > 0) {
+            clearInterval(this.timer)
+            this.timer = setInterval(function () {
+              this.loadActivity()
+            }.bind(this), 1000)
+          } else {
+            clearInterval(this.timer)
+            this.timer = setInterval(function () {
+              this.loadActivity()
+            }.bind(this), 5000)
+          }
           console.log(response)
         }, (error) => {
           console.log(error)
         })
     },
     pause: function (pid) {
-      axios.post('http://localhost:8888/activity/' + pid)
+      axios.post('http://localhost:8888/activity/' + pid + '/pause')
       console.log('Pausing a process: ' + pid)
+    },
+    resume: function (pid) {
+      axios.post('http://localhost:8888/activity/' + pid + '/resume')
+      console.log('Resume a process: ' + pid)
     }
   },
   mounted: function () {
@@ -64,7 +84,7 @@ export default {
   created: function () {
     this.timer = setInterval(function () {
       this.loadActivity()
-    }.bind(this), 1000)
+    }.bind(this), 5000)
   },
   destroyed: function () {
     clearInterval(this.timer)

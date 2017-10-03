@@ -17,24 +17,26 @@ class Rsync:
     def list_rsync_tasks(self):
         tasks = list()
         for proc in psutil.process_iter():
-            if proc.name() == 'rsync':
-                # pprint.pprint(dir(proc))
-                # pprint.pprint(proc.name())
-                # pprint.pprint(proc.cmdline())
-                # pprint.pprint(proc.terminal())
+            if proc.parent() and proc.parent().name() == 'rsync':
                 tasks.append({
                     'pid': proc.pid,
                     'started': proc._create_time,
                     'from': '/home/chris',
                     'to': proc.terminal(),
-                    'progress': self.get_progress(proc.pid)
+                    'progress': self.get_progress(proc.pid),
+                    'status': proc.status(),
+                    'ppid': proc.ppid(),
+                    'parent': proc.parent().name()
                 })
         return tasks
 
-    def soft_kill(self, pid):
+    def pause(self, pid):
         os.kill(pid, signal.SIGTSTP)
 
-    def hard_kill(self, pid):
+    def resume(self, pid):
+        os.kill(pid, signal.SIGCONT)
+
+    def stop(self, pid):
         os.kill(pid, signal.SIGTERM)
 
     def get_progress(self, pid):

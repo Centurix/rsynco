@@ -31,8 +31,17 @@ class RsyncoDaemon(Daemon):
         self.root = os.path.join(os.path.dirname(__file__), "..", "web", "dist")
 
     def run(self):
+        rest_config = {
+            '/': {
+                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Access-Control-Allow-Origin', '*')]
+            }
+        }
+
         cherrypy.config.update({'server.socket_port': 8888})
-        cherrypy.tree.mount(Activity(), '/activity', {})
+
+        cherrypy.tree.mount(Activity(), '/activity', config=rest_config)
         cherrypy.tree.mount(Root(), '/', config={
             '/': {
                 'tools.staticdir.on': True,
