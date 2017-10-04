@@ -1,5 +1,7 @@
 from rsynco.libs.daemon import Daemon
 from rsynco.api.activity import Activity
+from rsynco.api.hosts import Hosts
+from rsynco.api.jobs import Jobs
 from rsynco.api.root import Root
 
 import os
@@ -42,6 +44,8 @@ class RsyncoDaemon(Daemon):
         cherrypy.config.update({'server.socket_port': 8888})
 
         cherrypy.tree.mount(Activity(), '/activity', config=rest_config)
+        cherrypy.tree.mount(Hosts(), '/hosts', config=rest_config)
+        cherrypy.tree.mount(Jobs(), '/jobs', config=rest_config)
         cherrypy.tree.mount(Root(), '/', config={
             '/': {
                 'tools.staticdir.on': True,

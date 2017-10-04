@@ -23,9 +23,9 @@
               <progress class="progress is-primary is-large" v-bind:value="item.progress" max="100">{{ item.progress }}%</progress>
             </td>
             <td>
-              <button v-if="item.status == 'sleeping' || item.status == 'running'" class="button is-primary" v-on:click="pause(item.pid)">Pause</button>
-              <button v-if="item.status == 'stopped'" class="button is-primary" v-on:click="resume(item.pid)">Resume</button>
-              <button class="button is-danger" v-on:click="stop(item.pid)">Stop</button>
+              <button v-if="paused(item.status)" class="button is-primary" v-on:click="pause(item.pid)"><i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Pause</button>
+              <button v-if="!paused(item.status)" class="button is-primary" v-on:click="resume(item.pid)"><i class="fa fa-play" aria-hidden="true"></i>&nbsp;Resume</button>
+              <button class="button is-danger" v-on:click="stop(item.pid)"><i class="fa fa-stop" aria-hidden="true"></i>&nbsp;Stop</button>
             </td>
           </tr>
         </tbody>
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     loadActivity: function () {
-      axios.get('http://localhost:8888/activity')
+      axios.get(process.env.API_SERVER + '/activity')
         .then((response) => {
           this.items = response.data.data
           if (this.items.length > 0) {
@@ -66,16 +66,19 @@ export default {
         })
     },
     pause: function (pid) {
-      axios.post('http://localhost:8888/activity/' + pid + '/pause')
+      axios.post(process.env.API_SERVER + '/activity/' + pid + '/pause')
       console.log('Pausing a process: ' + pid)
     },
     resume: function (pid) {
-      axios.post('http://localhost:8888/activity/' + pid + '/resume')
+      axios.post(process.env.API_SERVER + '/activity/' + pid + '/resume')
       console.log('Resume a process: ' + pid)
     },
     stop: function (pid) {
-      axios.post('http://localhost:8888/activity/' + pid + '/stop')
+      axios.post(process.env.API_SERVER + '/activity/' + pid + '/stop')
       console.log('Stop a process: ' + pid)
+    },
+    paused: function (status) {
+      return status === 'sleeping' || status === 'running'
     }
   },
   mounted: function () {

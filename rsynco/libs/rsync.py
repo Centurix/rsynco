@@ -2,6 +2,7 @@ import psutil
 import re
 import os
 import signal
+import datetime
 
 
 class Rsync:
@@ -20,9 +21,9 @@ class Rsync:
             if proc.name() == 'rsync' and len(proc.children()) == 0:
                 tasks.append({
                     'pid': proc.pid,
-                    'started': proc._create_time,
-                    'from': self.get_from(),
-                    'to': self.get_to(),
+                    'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
+                    'from': proc.open_files()[0][0],
+                    'to': proc.open_files()[1][0],
                     'progress': self.get_progress(proc.pid),
                     'status': proc.status()
                 })
@@ -53,9 +54,3 @@ class Rsync:
                 return matches[-1]
 
         return 0
-
-    def get_from(self):
-        return "/home/chris"
-
-    def get_to(self):
-        return "/media"

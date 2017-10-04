@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Activity from '@/components/Activity'
 import Hosts from '@/components/Hosts'
 import Jobs from '@/components/Jobs'
+import About from '@/components/About'
 
 Vue.use(Router)
 
@@ -20,6 +21,10 @@ export default new Router({
       path: '/jobs',
       name: 'Jobs',
       component: Jobs
+    }, {
+      path: '/about',
+      name: 'About',
+      component: About
     }
   ]
 })

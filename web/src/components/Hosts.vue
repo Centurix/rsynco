@@ -44,7 +44,7 @@ export default {
     }
   },
   mounted: function () {
-    axios.get('http://localhost:8888/api/hosts')
+    axios.get(process.env.API_SERVER + '/hosts')
       .then((response) => {
         this.items = response.data.data
         console.log(response)
