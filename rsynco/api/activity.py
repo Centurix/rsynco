@@ -19,5 +19,7 @@ class Activity(object):
         elif action == "resume":
             test.resume(int(pid))
             return {'data': 'RESUMED'}
+        elif action == "stop":
+            test.stop(int(pid))
 
         return {'data': 'NO_ACTION'}

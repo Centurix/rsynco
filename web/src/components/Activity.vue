@@ -9,8 +9,6 @@
             <th>Started</th>
             <th>From</th>
             <th>To</th>
-            <th>Parent PID</th>
-            <th>Parent</th>
             <th>Progress</th>
             <th>Action</th>
           </tr>
@@ -21,15 +19,13 @@
             <td>{{ item.started }}</td>
             <td>{{ item.from }}</td>
             <td>{{ item.to }}</td>
-            <td>{{ item.ppid }}</td>
-            <td>{{ item.parent }}</td>
             <td>
               <progress class="progress is-primary is-large" v-bind:value="item.progress" max="100">{{ item.progress }}%</progress>
             </td>
             <td>
-              <button v-if="item.status == 'sleeping'" class="button is-primary" v-on:click="pause(item.pid)">Pause</button>
+              <button v-if="item.status == 'sleeping' || item.status == 'running'" class="button is-primary" v-on:click="pause(item.pid)">Pause</button>
               <button v-if="item.status == 'stopped'" class="button is-primary" v-on:click="resume(item.pid)">Resume</button>
-              <button class="button is-danger">Stop</button>
+              <button class="button is-danger" v-on:click="stop(item.pid)">Stop</button>
             </td>
           </tr>
         </tbody>
@@ -76,6 +72,10 @@ export default {
     resume: function (pid) {
       axios.post('http://localhost:8888/activity/' + pid + '/resume')
       console.log('Resume a process: ' + pid)
+    },
+    stop: function (pid) {
+      axios.post('http://localhost:8888/activity/' + pid + '/stop')
+      console.log('Stop a process: ' + pid)
     }
   },
   mounted: function () {

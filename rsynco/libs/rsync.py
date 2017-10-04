@@ -17,16 +17,14 @@ class Rsync:
     def list_rsync_tasks(self):
         tasks = list()
         for proc in psutil.process_iter():
-            if proc.parent() and proc.parent().name() == 'rsync':
+            if proc.name() == 'rsync' and len(proc.children()) == 0:
                 tasks.append({
                     'pid': proc.pid,
                     'started': proc._create_time,
-                    'from': '/home/chris',
-                    'to': proc.terminal(),
+                    'from': self.get_from(),
+                    'to': self.get_to(),
                     'progress': self.get_progress(proc.pid),
-                    'status': proc.status(),
-                    'ppid': proc.ppid(),
-                    'parent': proc.parent().name()
+                    'status': proc.status()
                 })
         return tasks
 
@@ -55,3 +53,9 @@ class Rsync:
                 return matches[-1]
 
         return 0
+
+    def get_from(self):
+        return "/home/chris"
+
+    def get_to(self):
+        return "/media"
