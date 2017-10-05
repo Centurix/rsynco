@@ -3,6 +3,7 @@ import re
 import os
 import signal
 import datetime
+import uuid
 
 
 class Rsync:
@@ -15,6 +16,15 @@ class Rsync:
     def __init__(self):
         pass
 
+    def process(self, from_location, to_location):
+        with open('/tmp/rsync_%s.log' % uuid.uuid4(), 'w') as logfile:
+            psutil.Popen(
+                ['rsync', '--info=progress2', '--partial', from_location, to_location],
+                stdout=logfile
+            )
+            os.wait()
+        return
+
     def list_rsync_tasks(self):
         tasks = list()
         for proc in psutil.process_iter():
@@ -22,9 +32,9 @@ class Rsync:
                 tasks.append({
                     'pid': proc.pid,
                     'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
-                    'from': proc.open_files()[0][0],
-                    'to': proc.open_files()[1][0],
-                    'progress': self.get_progress(proc.pid),
+                    'from': proc.cmdline()[-2],
+                    'to': proc.cmdline()[-1],
+                    'progress': self.get_progress(self.find_log_file(proc.open_files())),
                     'status': proc.status()
                 })
         return tasks
@@ -38,19 +48,28 @@ class Rsync:
     def stop(self, pid):
         os.kill(pid, signal.SIGTERM)
 
-    def get_progress(self, pid):
+    def get_progress(self, log_file):
         """
         Check /tmp/pid for the process output to check for output and scan for progress
-        If the log file doesn't exist then the process isn't being monitored by synco
-        :param pid:
+        If the log file doesn't exist then the process isn't being monitored by rsynco
+        :param log_file:
         :return:
         """
-        if os.path.isfile('/tmp/t.log'):
-            log = open('/tmp/t.log', 'r')
-            content = log.read()
-            log.close()
-            matches = re.findall(' (\d*)\% ', content)
-            if len(matches) > 0:
-                return matches[-1]
+        if log_file is None or not os.path.isfile(log_file):
+            return -1
 
-        return 0
+        log = open(log_file, 'r')
+        content = log.read()
+        log.close()
+        matches = re.findall(' (\d*)\% ', content)
+        if len(matches) > 0:
+            return matches[-1]
+
+        return 100
+
+    def find_log_file(self, open_files):
+        for open_file in open_files:
+            if open_file[0][:11] == "/tmp/rsync_" and open_file[0][-4:] == ".log":
+                return open_file[0]
+
+        return None

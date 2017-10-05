@@ -23,3 +23,11 @@ class Activity(object):
             test.stop(int(pid))
 
         return {'data': 'NO_ACTION'}
+
+    def PUT(self):
+        test = Rsync()
+        test.process('OfficeTable:/media/share/Software/ISO/Linux/*.*', '/home/chris/Desktop/iso')
+        return {'data': 'STARTED'}
+
+    def OPTIONS(self):
+        return {'data': 'OK'}

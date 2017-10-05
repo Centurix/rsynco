@@ -2,11 +2,13 @@
   <section class="section">
     <div>
       <h1 class="title">Current Activity</h1>
+      <button v-on:click="start()">Start</button>
       <table class="table is-striped is-fullwidth">
         <thead>
           <tr>
             <th>Process ID</th>
             <th>Started</th>
+            <th>Duration</th>
             <th>From</th>
             <th>To</th>
             <th>Progress</th>
@@ -17,15 +19,17 @@
           <tr v-for="item in items">
             <td>{{ item.pid }}</td>
             <td>{{ item.started }}</td>
+            <td>{{ duration(item.started) }} Seconds</td>
             <td>{{ item.from }}</td>
             <td>{{ item.to }}</td>
             <td>
-              <progress class="progress is-primary is-large" v-bind:value="item.progress" max="100">{{ item.progress }}%</progress>
+              <span v-if="item.progress == -1"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;Not monitored</span>
+              <progress v-if="item.progress > -1" class="progress is-primary is-large" v-bind:value="item.progress" max="100">{{ item.progress }}%</progress>
             </td>
             <td>
-              <button v-if="paused(item.status)" class="button is-primary" v-on:click="pause(item.pid)"><i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Pause</button>
-              <button v-if="!paused(item.status)" class="button is-primary" v-on:click="resume(item.pid)"><i class="fa fa-play" aria-hidden="true"></i>&nbsp;Resume</button>
-              <button class="button is-danger" v-on:click="stop(item.pid)"><i class="fa fa-stop" aria-hidden="true"></i>&nbsp;Stop</button>
+              <button v-if="paused(item.status)" class="button is-primary is-small" v-on:click="pause(item.pid)"><i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Pause</button>
+              <button v-if="!paused(item.status)" class="button is-primary is-small" v-on:click="resume(item.pid)"><i class="fa fa-play" aria-hidden="true"></i>&nbsp;Resume</button>
+              <button class="button is-danger is-small" v-on:click="stop(item.pid)"><i class="fa fa-stop" aria-hidden="true"></i>&nbsp;Stop</button>
             </td>
           </tr>
         </tbody>
@@ -50,17 +54,10 @@ export default {
         .then((response) => {
           this.items = response.data.data
           if (this.items.length > 0) {
-            clearInterval(this.timer)
-            this.timer = setInterval(function () {
-              this.loadActivity()
-            }.bind(this), 1000)
-          } else {
-            clearInterval(this.timer)
-            this.timer = setInterval(function () {
-              this.loadActivity()
-            }.bind(this), 5000)
+            this.setRefresh(1000)
+            return
           }
-          console.log(response)
+          this.setRefresh(5000)
         }, (error) => {
           console.log(error)
         })
@@ -79,15 +76,28 @@ export default {
     },
     paused: function (status) {
       return status === 'sleeping' || status === 'running'
+    },
+    duration: function (started) {
+      return this.$moment().diff(this.$moment(started), 'seconds')
+    },
+    setRefresh: function (interval) {
+      if (this.timer) {
+        clearInterval(this.timer)
+      }
+      this.timer = setInterval(function () {
+        this.loadActivity()
+      }.bind(this), interval)
+    },
+    start: function () {
+      axios.put(process.env.API_SERVER + '/activity')
+      console.log('Starting a process')
     }
   },
   mounted: function () {
     this.loadActivity()
   },
   created: function () {
-    this.timer = setInterval(function () {
-      this.loadActivity()
-    }.bind(this), 5000)
+    this.setRefresh(5000)
   },
   destroyed: function () {
     clearInterval(this.timer)

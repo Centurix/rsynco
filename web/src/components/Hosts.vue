@@ -5,26 +5,23 @@
       <table class="table is-striped is-fullwidth">
         <thead>
           <tr>
-            <th>Process ID</th>
-            <th>Started</th>
-            <th>From</th>
-            <th>To</th>
+            <th>Name</th>
+            <th>Hostname</th>
+            <th>User</th>
+            <th>Auth</th>
             <th>Progress</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in items">
-            <td>{{ item.pid }}</td>
-            <td>{{ item.started }}</td>
-            <td>{{ item.from }}</td>
-            <td>{{ item.to }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.host }}</td>
+            <td>{{ item.user }}</td>
+            <td>{{ item.auth }}</td>
+            <td></td>
             <td>
-              <progress class="progress is-primary is-large" v-bind:value="item.progress" max="100">{{ item.progress }}%</progress>
-            </td>
-            <td>
-              <button class="button is-primary">Pause</button>
-              <button class="button is-danger">Stop</button>
+              <button class="button is-primary">Stuff</button>
             </td>
           </tr>
         </tbody>
@@ -46,7 +43,10 @@ export default {
   mounted: function () {
     axios.get(process.env.API_SERVER + '/hosts')
       .then((response) => {
-        this.items = response.data.data
+//        this.items = response.data.data
+        this.items = [{
+          'name': 'Host 1'
+        }]
         console.log(response)
       }, (error) => {
         console.log(error)

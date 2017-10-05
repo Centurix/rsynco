@@ -37,7 +37,10 @@ class RsyncoDaemon(Daemon):
             '/': {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
                 'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Access-Control-Allow-Origin', '*')]
+                'tools.response_headers.headers': [
+                    ('Access-Control-Allow-Origin', '*'),
+                    ('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS')
+                ]
             }
         }
 

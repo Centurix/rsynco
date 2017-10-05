@@ -18,7 +18,9 @@
     "bulma": "^0.5.3",
     "bulma-badge": "0.0.3",
     "font-awesome": "^4.7.0",
+    "moment": "^2.18.1",
     "vue": "^2.4.2",
+    "vue-momentjs": "^0.1.1",
     "vue-router": "^2.7.0"
   },
   "devDependencies": {
