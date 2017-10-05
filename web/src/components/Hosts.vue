@@ -7,6 +7,7 @@
           <tr>
             <th>Name</th>
             <th>Hostname</th>
+            <th>Port</th>
             <th>User</th>
             <th>Auth</th>
             <th>Progress</th>
@@ -15,13 +16,14 @@
         </thead>
         <tbody>
           <tr v-for="item in items">
-            <td>{{ item.name }}</td>
             <td>{{ item.host }}</td>
-            <td>{{ item.user }}</td>
-            <td>{{ item.auth }}</td>
+            <td>{{ item.hostname }}</td>
+            <td>{{ item.port }}</td>
+            <td>{{ item.username }}</td>
+            <td>{{ item.password }}</td>
             <td></td>
             <td>
-              <button class="button is-primary">Stuff</button>
+              <button class="button is-primary"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
             </td>
           </tr>
         </tbody>
@@ -43,10 +45,7 @@ export default {
   mounted: function () {
     axios.get(process.env.API_SERVER + '/hosts')
       .then((response) => {
-//        this.items = response.data.data
-        this.items = [{
-          'name': 'Host 1'
-        }]
+        this.items = response.data.data
         console.log(response)
       }, (error) => {
         console.log(error)

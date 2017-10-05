@@ -3,6 +3,7 @@
     <div>
       <h1 class="title">Current Activity</h1>
       <button v-on:click="start()">Start</button>
+      <button v-on:click="config()">Config</button>
       <table class="table is-striped is-fullwidth">
         <thead>
           <tr>
@@ -91,6 +92,12 @@ export default {
     start: function () {
       axios.put(process.env.API_SERVER + '/activity')
       console.log('Starting a process')
+    },
+    config: function () {
+      axios.delete(process.env.API_SERVER + '/activity')
+        .then((response) => {
+          console.log(response)
+        })
     }
   },
   mounted: function () {

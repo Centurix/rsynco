@@ -1,26 +1,25 @@
 #!/usr/bin/env python3
 import sys
+import os
+from rsynco import Config
 from rsynco.rsynco_daemon import RsyncoDaemon
-from configobj import ConfigObj
-from validate import Validator
-
 
 EXIT_OK = 0
 EXIT_OTHER_ERROR = 1
 EXIT_PARAM_ERROR = 2
 
-config_file = 'rsynco.ini'
-config_spec = 'configspec.ini'
+config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'rsynco.ini')
+config_spec = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'configspec.ini')
+
 
 if __name__ == "__main__":
-    config = ConfigObj(config_file, configspec=config_spec)
-    validator = Validator()
+    config = Config(config_file, config_spec)
 
-    if not config.validate(validator):
+    if config.data is None:
         print("Invalid configuration file")
         sys.exit(EXIT_PARAM_ERROR)
 
-    daemon = RsyncoDaemon(config['pidfile'])
+    daemon = RsyncoDaemon(config.data['pidfile'])
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             daemon.start()
