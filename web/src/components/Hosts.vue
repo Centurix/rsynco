@@ -11,7 +11,7 @@
             <th>User</th>
             <th>Auth</th>
             <th>Progress</th>
-            <th>Action</th>
+            <th class="has-text-right">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -22,18 +22,27 @@
             <td>{{ item.username }}</td>
             <td>{{ item.password }}</td>
             <td></td>
-            <td>
-              <button class="button is-primary"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
+            <td class="has-text-right">
+              <button class="button is-primary" v-on:click="editHost(item.host)"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
             </td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="7" class="has-text-right">
+              <button class="button is-primary" v-on:click="newHost()"">Add a New Host</button>
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
+    <host ref="host"></host>
   </section>
 </template>
 
 <script>
 import axios from 'axios'
+import Host from './Host'
 
 export default {
   name: 'hosts',
@@ -41,6 +50,18 @@ export default {
     return {
       items: []
     }
+  },
+  methods: {
+    editHost: function (name) {
+      // Trigger hosts modal popup
+      this.$refs.host.editHost(name)
+    },
+    newHost: function () {
+      this.$refs.host.newHost()
+    }
+  },
+  components: {
+    Host
   },
   mounted: function () {
     axios.get(process.env.API_SERVER + '/hosts')

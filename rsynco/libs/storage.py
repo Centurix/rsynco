@@ -20,6 +20,16 @@ class Storage:
             })
         return hosts
 
+    def get_host(self, name):
+        host = self.config.data['hosts'][name]
+        return {
+            'host': name,
+            'hostname': host['hostname'],
+            'port': host['port'],
+            'username': host['username'],
+            'password': host['password']
+        }
+
     def update_host(self, host, hostname, port, username, password):
         # TODO: Update a specific host
         # TODO: Re-write the config file again
