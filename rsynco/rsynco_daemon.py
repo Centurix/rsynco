@@ -3,6 +3,7 @@ from rsynco.api.activity import Activity
 from rsynco.api.hosts import Hosts
 from rsynco.api.jobs import Jobs
 from rsynco.api.root import Root
+from rsynco import Config
 
 import os
 import cherrypy
@@ -10,16 +11,13 @@ import cherrypy
 """
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
-# TODO: Job details in a file somewhere
-# TODO: Move server port to the configuration
 # TODO: Validate JSON with JSON SCHEMA, maybe as decorators?
+# TODO: Create transformers for JSONAPI output serialisation
 # TODO: Tests
 # TODO: Make sure this is init.d/systemd/whatever friendly
 # TODO: Include boilerplate for pip, pypi and other repositories
 # TODO: Some kind of basic authentication
 # TODO: Add a build process to pipelines and dump a release
-# TODO: Job entry pages
-# TODO: Create transformers for JSONAPI output serialisation
 # TODO: Use exceptions throughout
 
 
@@ -29,6 +27,7 @@ class RsyncoDaemon(Daemon):
         self.root = os.path.join(os.path.dirname(__file__), "..", "web", "dist")
 
     def run(self):
+        config = Config()
         rest_config = {
             '/': {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
@@ -41,7 +40,7 @@ class RsyncoDaemon(Daemon):
             }
         }
 
-        cherrypy.config.update({'server.socket_port': 8888, 'server.socket_host': '0.0.0.0'})
+        cherrypy.config.update({'server.socket_port': config.data['port'], 'server.socket_host': config.data['address']})
 
         cherrypy.tree.mount(Activity(), '/activity', config=rest_config)
         cherrypy.tree.mount(Hosts(), '/hosts', config=rest_config)
