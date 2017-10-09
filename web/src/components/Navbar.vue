@@ -4,13 +4,13 @@
       <a href="/" class="navbar-item">
         <img src="/static/rsynco_brand.png">
       </a>
-      <button class="button navbar-burger">
+      <button class="button navbar-burger" v-bind:class="{ 'is-active': isActive }" v-on:click="isActive = !isActive">
         <span></span>
         <span></span>
         <span></span>
       </button>
     </div>
-    <div class="navbar-menu">
+    <div class="navbar-menu" ref="burgerMenu" v-bind:class="{ 'is-active': isActive }">
       <div class="navbar-start">
         <router-link :to="{name: 'Activity'}" class="navbar-item">Activity</router-link>
         <router-link :to="{name: 'Hosts'}" class="navbar-item">Hosts</router-link>
@@ -23,7 +23,12 @@
 
 <script>
 export default {
-  name: 'navbar'
+  name: 'navbar',
+  data () {
+    return {
+      isActive: false
+    }
+  }
 }
 </script>
 

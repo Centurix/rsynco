@@ -10,10 +10,9 @@ import cherrypy
 """
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
-# TODO: Store host and job details in a file somewhere
+# TODO: Job details in a file somewhere
 # TODO: Move server port to the configuration
 # TODO: Validate JSON with JSON SCHEMA, maybe as decorators?
-# TODO: Make the burger menu work correctly on mobile
 # TODO: Tests
 # TODO: Make sure this is init.d/systemd/whatever friendly
 # TODO: Include boilerplate for pip, pypi and other repositories
@@ -42,7 +41,7 @@ class RsyncoDaemon(Daemon):
             }
         }
 
-        cherrypy.config.update({'server.socket_port': 8888})
+        cherrypy.config.update({'server.socket_port': 8888, 'server.socket_host': '0.0.0.0'})
 
         cherrypy.tree.mount(Activity(), '/activity', config=rest_config)
         cherrypy.tree.mount(Hosts(), '/hosts', config=rest_config)

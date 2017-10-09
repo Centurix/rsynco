@@ -5,8 +5,8 @@
         <p class="is-info">
           <img src="/static/rsynco_600x133.png">
         </p>
-        <p class="is-centered">
-          rsync Web Management Interface
+        <p class="is-centered has-text-centered">
+          rsync Management
         </p>
       </div>
     </div>

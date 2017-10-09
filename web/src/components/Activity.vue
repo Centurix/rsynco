@@ -63,13 +63,13 @@ export default {
         })
     },
     pause: function (pid) {
-      axios.post(process.env.API_SERVER + '/activity/' + pid + '/pause')
+      axios.post(process.env.API_SERVER + '/activity/' + pid + '/pause', {})
     },
     resume: function (pid) {
-      axios.post(process.env.API_SERVER + '/activity/' + pid + '/resume')
+      axios.post(process.env.API_SERVER + '/activity/' + pid + '/resume', {})
     },
     stop: function (pid) {
-      axios.post(process.env.API_SERVER + '/activity/' + pid + '/stop')
+      axios.post(process.env.API_SERVER + '/activity/' + pid + '/stop', {})
     },
     paused: function (status) {
       return status === 'sleeping' || status === 'running'

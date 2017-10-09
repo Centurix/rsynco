@@ -1,12 +1,9 @@
 import cherrypy
 from rsynco.libs.storage import Storage
+from .apihandler import ApiHandler
 
 
-@cherrypy.tools.accept(media='application/json')
-@cherrypy.tools.json_out(content_type='application/vnd.api+json')
-@cherrypy.tools.json_in()
-@cherrypy.expose
-class Hosts(object):
+class Hosts(ApiHandler):
     def __init__(self):
         self._storage = Storage()
 
@@ -29,17 +26,14 @@ class Hosts(object):
 
     def PUT(self, name):
         data = cherrypy.request.json
-        lines = self._storage.update_host(
+        self._storage.update_host(
             name,
             data['hostname'],
             data['port'],
             data['username'],
             data['password']
         )
-        return {'data': lines}
-
-    def OPTIONS(self, *args):
-        return {'data': 'OK'}
+        return {'data': 'UPDATED'}
 
     def DELETE(self, name):
         self._storage.delete_host(name)

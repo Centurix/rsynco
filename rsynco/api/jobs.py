@@ -1,11 +1,6 @@
-import cherrypy
+from .apihandler import ApiHandler
 
 
-@cherrypy.tools.accept(media='application/json')
-@cherrypy.tools.json_out(content_type='application/vnd.api+json')
-@cherrypy.tools.json_in()
-class Jobs(object):
-    exposed = True
-
+class Jobs(ApiHandler):
     def GET(self):
         return {'data': []}
