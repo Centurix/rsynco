@@ -14,15 +14,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in items">
-            <td>{{ item.host }}</td>
-            <td>{{ item.hostname }}</td>
-            <td>{{ item.port }}</td>
-            <td>{{ item.username }}</td>
-            <td>{{ item.password }}</td>
+          <tr v-for="host in hosts">
+            <td>{{ host.host }}</td>
+            <td>{{ host.hostname }}</td>
+            <td>{{ host.port }}</td>
+            <td>{{ host.username }}</td>
+            <td>{{ host.password }}</td>
             <td class="has-text-right">
-              <button class="button is-primary is-small" v-on:click="editHost(item.host)"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
-              <button class="button is-danger is-small" v-on:click="deleteHost(item.host)"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete</button>
+              <button class="button is-primary is-small" v-on:click="editHost(host.host)"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
+              <button class="button is-danger is-small" v-on:click="deleteHost(host.host)"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete</button>
             </td>
           </tr>
         </tbody>
@@ -48,7 +48,7 @@ export default {
   name: 'hosts',
   data () {
     return {
-      items: []
+      hosts: []
     }
   },
   methods: {
@@ -71,7 +71,7 @@ export default {
     loadHosts: function () {
       axios.get(process.env.API_SERVER + '/hosts')
         .then((response) => {
-          this.items = response.data.data
+          this.hosts = response.data.data
           console.log(response)
         }, (error) => {
           console.log(error)
