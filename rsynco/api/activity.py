@@ -3,17 +3,18 @@ from rsynco.libs.rsync import Rsync
 from rsynco.libs.storage import Storage
 
 
+@cherrypy.tools.accept(media='application/json')
+@cherrypy.tools.json_out(content_type='application/vnd.api+json')
+@cherrypy.tools.json_in()
+@cherrypy.expose
 class Activity(object):
-    exposed = True
+    def __init__(self):
+        self._storage = Storage()
 
-    @cherrypy.tools.accept(media='application/json')
-    @cherrypy.tools.json_out(content_type='application/vnd.api+json')
     def GET(self):
         test = Rsync()
         return {'data': test.list_rsync_tasks()}
 
-    @cherrypy.tools.accept(media='application/json')
-    @cherrypy.tools.json_out(content_type='application/vnd.api+json')
     def POST(self, pid, action):
         test = Rsync()
         if action == "pause":
@@ -27,20 +28,5 @@ class Activity(object):
 
         return {'data': 'NO_ACTION'}
 
-    @cherrypy.tools.accept(media='application/json')
-    @cherrypy.tools.json_out(content_type='application/vnd.api+json')
-    def PUT(self):
-        test = Rsync()
-        test.process('OfficeTable:/media/share/Software/ISO/Linux/*.*', '/home/chris/Desktop/iso')
-        return {'data': 'STARTED'}
-
-    @cherrypy.tools.accept(media='application/json')
-    @cherrypy.tools.json_out(content_type='application/vnd.api+json')
     def OPTIONS(self):
         return {'data': 'OK'}
-
-    @cherrypy.tools.accept(media='application/json')
-    @cherrypy.tools.json_out(content_type='application/vnd.api+json')
-    def DELETE(self):
-        storage = Storage()
-        return storage.get_hosts()

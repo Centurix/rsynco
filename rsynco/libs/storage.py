@@ -30,12 +30,27 @@ class Storage:
             'password': host['password']
         }
 
-    def update_host(self, host, hostname, port, username, password):
-        # TODO: Update a specific host
-        # TODO: Re-write the config file again
-        # TODO: Split these out into classes for jobs/hosts etc?
-        pass
+    def add_host(self, host, hostname, port, username, password):
+        self.config.data['hosts'][host] = {
+            'host': host,
+            'hostname': hostname,
+            'port': port,
+            'username': username,
+            'password': password
+        }
+        return self.config.update()
 
+    def update_host(self, host, hostname, port, username, password):
+        self.config.data['hosts'][host]['hostname'] = hostname
+        self.config.data['hosts'][host]['port'] = port
+        self.config.data['hosts'][host]['username'] = username
+        self.config.data['hosts'][host]['password'] = password
+        return self.config.update()
+
+    def delete_host(self, host):
+        # Remove the host from the configuration file
+        del self.config.data['hosts'][host]
+        return self.config.update()
 
 """
 We have an INI file already, use that.

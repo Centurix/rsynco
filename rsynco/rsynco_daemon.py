@@ -12,14 +12,16 @@ To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
 # TODO: Store host and job details in a file somewhere
 # TODO: Move server port to the configuration
-# TODO: Validate JSON with JSON SCHEMA
+# TODO: Validate JSON with JSON SCHEMA, maybe as decorators?
 # TODO: Make the burger menu work correctly on mobile
 # TODO: Tests
 # TODO: Make sure this is init.d/systemd/whatever friendly
 # TODO: Include boilerplate for pip, pypi and other repositories
 # TODO: Some kind of basic authentication
 # TODO: Add a build process to pipelines and dump a release
-# TODO: Host and Job entry pages
+# TODO: Job entry pages
+# TODO: Create transformers for JSONAPI output serialisation
+# TODO: Use exceptions throughout
 
 
 class RsyncoDaemon(Daemon):
@@ -34,6 +36,7 @@ class RsyncoDaemon(Daemon):
                 'tools.response_headers.on': True,
                 'tools.response_headers.headers': [
                     ('Access-Control-Allow-Origin', '*'),
+                    ('Access-Control-Allow-Headers', 'Content-Type'),
                     ('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
                 ]
             }

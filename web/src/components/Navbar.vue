@@ -12,9 +12,9 @@
     </div>
     <div class="navbar-menu">
       <div class="navbar-start">
-        <router-link :to="{name: 'Activity'}" class="navbar-item badge is-badge-small is-badge-warning is-badge-bottom" data-badge="1">Activity</router-link>
-        <router-link :to="{name: 'Hosts'}" class="navbar-item badge is-badge-small is-badge-warning is-badge-bottom" data-badge="2">Hosts</router-link>
-        <router-link :to="{name: 'Jobs'}" class="navbar-item badge is-badge-small is-badge-warning is-badge-bottom" data-badge="3">Jobs</router-link>
+        <router-link :to="{name: 'Activity'}" class="navbar-item">Activity</router-link>
+        <router-link :to="{name: 'Hosts'}" class="navbar-item">Hosts</router-link>
+        <router-link :to="{name: 'Jobs'}" class="navbar-item">Jobs</router-link>
         <router-link :to="{name: 'About'}" class="navbar-item">About</router-link>
       </div>
     </div>

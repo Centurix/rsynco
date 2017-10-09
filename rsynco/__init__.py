@@ -18,3 +18,6 @@ class Config:
 
         if not self.data.validate(validator):
             self.data = None
+
+    def update(self):
+        self.data.write()

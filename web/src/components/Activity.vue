@@ -2,8 +2,6 @@
   <section class="section">
     <div>
       <h1 class="title">Current Activity</h1>
-      <button v-on:click="start()">Start</button>
-      <button v-on:click="config()">Config</button>
       <table class="table is-striped is-fullwidth">
         <thead>
           <tr>
@@ -46,7 +44,8 @@ export default {
   name: 'activity',
   data () {
     return {
-      items: []
+      items: [],
+      timer: null
     }
   },
   methods: {
@@ -65,15 +64,12 @@ export default {
     },
     pause: function (pid) {
       axios.post(process.env.API_SERVER + '/activity/' + pid + '/pause')
-      console.log('Pausing a process: ' + pid)
     },
     resume: function (pid) {
       axios.post(process.env.API_SERVER + '/activity/' + pid + '/resume')
-      console.log('Resume a process: ' + pid)
     },
     stop: function (pid) {
       axios.post(process.env.API_SERVER + '/activity/' + pid + '/stop')
-      console.log('Stop a process: ' + pid)
     },
     paused: function (status) {
       return status === 'sleeping' || status === 'running'
@@ -81,23 +77,13 @@ export default {
     duration: function (started) {
       return this.$moment().diff(this.$moment(started), 'seconds')
     },
-    setRefresh: function (interval) {
+    setRefresh: function (milliseconds) {
       if (this.timer) {
-        clearInterval(this.timer)
+        clearTimeout(this.timer)
       }
-      this.timer = setInterval(function () {
+      this.timer = setTimeout(function () {
         this.loadActivity()
-      }.bind(this), interval)
-    },
-    start: function () {
-      axios.put(process.env.API_SERVER + '/activity')
-      console.log('Starting a process')
-    },
-    config: function () {
-      axios.delete(process.env.API_SERVER + '/activity')
-        .then((response) => {
-          console.log(response)
-        })
+      }.bind(this), milliseconds)
     }
   },
   mounted: function () {
