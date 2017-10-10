@@ -1,6 +1,7 @@
 import cherrypy
 from .apihandler import ApiHandler
 from rsynco.libs.repositories.job_repository import JobRepository
+from rsynco.libs.validation import validation
 
 
 class Jobs(ApiHandler):
@@ -13,8 +14,9 @@ class Jobs(ApiHandler):
 
         return {'data': self._JobRepository.get_jobs()}
 
+    @validation
     def POST(self):
-        data = cherrypy.request.json
+        data = cherrypy.request.json['data']['attributes']
         self._JobRepository.add_job(
             data['name'],
             data['from_host'],
@@ -24,8 +26,9 @@ class Jobs(ApiHandler):
         )
         return {'data': 'ADDED'}
 
+    @validation
     def PUT(self, name):
-        data = cherrypy.request.json
+        data = cherrypy.request.json['data']['attributes']
         self._JobRepository.update_job(
             name,
             data['from_host'],

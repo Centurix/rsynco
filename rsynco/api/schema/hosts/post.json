@@ -6,19 +6,22 @@
       "properties": {
         "attributes": {
           "properties": {
-            "host": {"type": "string"},
-            "hostname": {"type": "string"},
-            "password": {"type": "string"},
-            "port": {"type": "integer"},
-            "username": {"type": "string"}
+            "host": {"type": "string", "minLength": 1},
+            "hostname": {"type": "string", "minLength": 1},
+            "password": {"type": "string", "minLength": 1},
+            "port": {"type": "integer", "minLength": 1},
+            "username": {"type": "string", "minLength": 1}
           },
-          "type": "object"
+          "type": "object",
+          "required": ["host", "hostname", "password", "port", "username"]
         },
         "type": {"type": "string"}
       },
-      "type": "object"
+      "type": "object",
+      "required": ["attributes"]
     }
   },
   "type": "object",
+  "required": ["data"],
   "additionalProperties": false
 }

@@ -1,9 +1,7 @@
 import cherrypy
 from rsynco.libs.repositories.host_repository import HostRepository
 from .apihandler import ApiHandler
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError
-import json
+from rsynco.libs.validation import validation
 
 
 class Hosts(ApiHandler):
@@ -16,19 +14,8 @@ class Hosts(ApiHandler):
 
         return {'data': self._hostRepository.get_all_hosts()}
 
+    @validation
     def POST(self):
-        # Validate the incoming json
-        # TODO: Move this schema validation to the ApiHandler and resolve invisibly
-        try:
-            # Grab the schema
-            with open('/home/chris/Projects/PycharmProjects/rsynco/rsynco/api/schema/hosts/post.json', 'r') as schema:
-                schema_contents = schema.read()
-
-            validate(cherrypy.request.json, json.loads(schema_contents))
-        except ValidationError as validation_error:
-            cherrypy.response.status = 400
-            return {'data': validation_error.message}
-
         data = cherrypy.request.json['data']['attributes']
         self._hostRepository.add_host(
             data['host'],
@@ -39,8 +26,9 @@ class Hosts(ApiHandler):
         )
         return {'data': 'ADDED'}
 
+    @validation
     def PUT(self, name):
-        data = cherrypy.request.json
+        data = cherrypy.request.json['data']['attributes']
         self._hostRepository.update_host(
             name,
             data['hostname'],

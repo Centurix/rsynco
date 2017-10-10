@@ -94,7 +94,12 @@ export default {
     },
     add: function () {
       // Add a new job
-      axios.post(process.env.API_SERVER + '/jobs', this.job)
+      axios.post(process.env.API_SERVER + '/jobs', {
+        data: {
+          type: 'jobs',
+          attributes: this.job
+        }
+      })
         .then((response) => {
           console.log('Added!')
           this.hide()
@@ -106,7 +111,12 @@ export default {
     },
     update: function () {
       // Save the host
-      axios.put(process.env.API_SERVER + '/jobs/' + this.job.name, this.job)
+      axios.put(process.env.API_SERVER + '/jobs/' + this.job.name, {
+        data: {
+          type: 'jobs',
+          attributes: this.job
+        }
+      })
         .then((response) => {
           console.log('Updated!')
           this.hide()

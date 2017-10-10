@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {},
+  "properties": {
+    "data": {
+      "properties": {
+        "attributes": {
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "from_host": {"type": "string", "minLength": 1},
+            "from_path": {"type": "string", "minLength": 1},
+            "to_host": {"type": "string", "minLength": 1},
+            "to_path": {"type": "string", "minLength": 1}
+          },
+          "type": "object",
+          "required": ["name", "from_host", "from_path", "to_host", "to_path"]
+        },
+        "type": {"type": "string"}
+      },
+      "type": "object",
+      "required": ["attributes"]
+    }
+  },
+  "type": "object",
+  "required": ["data"],
+  "additionalProperties": false
+}

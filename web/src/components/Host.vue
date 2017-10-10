@@ -111,7 +111,12 @@ export default {
     },
     update: function () {
       // Save the host
-      axios.put(process.env.API_SERVER + '/hosts/' + this.host.host, this.host)
+      axios.put(process.env.API_SERVER + '/hosts/' + this.host.host, {
+        data: {
+          type: 'hosts',
+          attributes: this.host
+        }
+      })
         .then((response) => {
           console.log('Updated!')
           this.hide()

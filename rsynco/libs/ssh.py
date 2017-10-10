@@ -17,7 +17,7 @@ class SshConfig:
             for line in ssh_config.readlines():
                 stripped_line = line.strip(' \t\n').lower()
                 if stripped_line != '' and stripped_line[:1] != '#':
-                    tokens = stripped_line.split(' ')
+                    tokens = stripped_line.split()
                     if tokens[0] == 'host' and len(tokens) > 1:
                         if tokens[1][:1] != '-' and host['host'] != '' and host['hostname'] != '':
                             self.hosts.append(host)
