@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {},
+  "properties": {
+    "data": {
+      "properties": {
+        "attributes": {
+          "properties": {
+            "host": {"type": "string"},
+            "hostname": {"type": "string"},
+            "password": {"type": "string"},
+            "port": {"type": "integer"},
+            "username": {"type": "string"}
+          },
+          "type": "object"
+        },
+        "type": {"type": "string"}
+      },
+      "type": "object"
+    }
+  },
+  "type": "object",
+  "additionalProperties": false
+}

@@ -19,7 +19,7 @@ To pause rsync, send the TSTP signal. Start rsync with --partial.
 # TODO: Some kind of basic authentication
 # TODO: Add a build process to pipelines and dump a release
 # TODO: Use exceptions throughout
-
+# TODO: Figure out how to pass the current server address to the SPA
 
 class RsyncoDaemon(Daemon):
     def __init__(self, pidfile):

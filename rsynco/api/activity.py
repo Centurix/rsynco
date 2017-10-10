@@ -1,12 +1,8 @@
 from rsynco.libs.rsync import Rsync
-from rsynco.libs.storage import Storage
 from .apihandler import ApiHandler
 
 
 class Activity(ApiHandler):
-    def __init__(self):
-        self._storage = Storage()
-
     def GET(self):
         test = Rsync()
         return {'data': test.list_rsync_tasks()}

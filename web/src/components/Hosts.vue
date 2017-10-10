@@ -2,6 +2,12 @@
   <section class="section">
     <div>
       <h1 class="title">Hosts</h1>
+      <p class="has-text-right">
+        <label class="checkbox">
+          <input type="checkbox" v-model="showSystemHosts">
+          List System defined SSH hosts
+        </label>
+      </p>
       <table class="table is-striped is-fullwidth">
         <thead>
           <tr>
@@ -14,15 +20,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="host in hosts">
+          <tr v-for="host in hosts" v-show="host.type == 'rsynco' || showSystemHosts">
             <td>{{ host.host }}</td>
             <td>{{ host.hostname }}</td>
             <td>{{ host.port }}</td>
             <td>{{ host.username }}</td>
             <td>{{ host.password }}</td>
             <td class="has-text-right">
-              <button class="button is-primary is-small" v-on:click="editHost(host.host)"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
-              <button class="button is-danger is-small" v-on:click="deleteHost(host.host)"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete</button>
+              <span v-show="host.type == 'system'">SSH Config Host (Non-edit)</span>
+              <button v-show="host.type == 'rsynco'" class="button is-primary is-small" v-on:click="editHost(host.host)"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
+              <button v-show="host.type == 'rsynco'" class="button is-danger is-small" v-on:click="deleteHost(host.host)"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete</button>
             </td>
           </tr>
         </tbody>
@@ -48,7 +55,8 @@ export default {
   name: 'hosts',
   data () {
     return {
-      hosts: []
+      hosts: [],
+      showSystemHosts: false
     }
   },
   methods: {

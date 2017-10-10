@@ -23,7 +23,7 @@
           <div class="field">
             <label class="label">Port</label>
             <div class="control">
-              <input class="input" type="text" placeholder="Port" v-model="host.port">
+              <input class="input" type="number" placeholder="Port" v-model.number="host.port">
             </div>
           </div>
           <div class="field">
@@ -62,7 +62,7 @@ export default {
       host: {
         host: '',
         hostname: '',
-        port: '',
+        port: 0,
         username: '',
         password: ''
       }
@@ -75,7 +75,7 @@ export default {
       this.host = {
         host: '',
         hostname: '',
-        port: '',
+        port: 0,
         username: '',
         password: ''
       }
@@ -94,7 +94,12 @@ export default {
     },
     add: function () {
       // Add a new host
-      axios.post(process.env.API_SERVER + '/hosts', this.host)
+      axios.post(process.env.API_SERVER + '/hosts', {
+        data: {
+          type: 'hosts',
+          attributes: this.host
+        }
+      })
         .then((response) => {
           console.log('Added!')
           this.hide()
