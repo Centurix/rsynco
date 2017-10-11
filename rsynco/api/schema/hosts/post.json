@@ -9,7 +9,7 @@
             "host": {"type": "string", "minLength": 1},
             "hostname": {"type": "string", "minLength": 1},
             "password": {"type": "string", "minLength": 1},
-            "port": {"type": "integer", "minLength": 1},
+            "port": {"type": "integer", "minLength": 1, "minimum": 1, "maximum": 65535},
             "username": {"type": "string", "minLength": 1}
           },
           "type": "object",

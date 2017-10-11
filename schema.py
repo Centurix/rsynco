@@ -1,34 +1,54 @@
+from jsonschema import Draft4Validator
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 import pprint
 
 
 schema = {
-    "type": "object",
-    "properties": {
-        "price": {"type": "number"},
-        "name": {"type": "string"}
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {},
+  "properties": {
+    "data": {
+      "properties": {
+        "attributes": {
+          "properties": {
+            "host": {"type": "string", "minLength": 1},
+            "hostname": {"type": "string", "minLength": 1},
+            "password": {"type": "string", "minLength": 1},
+            "port": {"type": "integer", "minLength": 1},
+            "username": {"type": "string", "minLength": 1}
+          },
+          "type": "object",
+          "required": ["host", "hostname", "password", "port", "username"]
+        },
+        "type": {"type": "string"}
+      },
+      "type": "object",
+      "required": ["attributes"]
     }
+  },
+  "type": "object",
+  "required": ["data"],
+  "additionalProperties": False
 }
 
-try:
-    validate({"name": "Eggs", "price": 34.99}, schema)
-    validate({"name": 100, "price": "Invalid"}, schema)
-except ValidationError as value_error:
-    print(value_error.message)
 
-    print(value_error.absolute_path)
-    print(value_error.absolute_schema_path)
-
-    print(value_error.args)
-    print(value_error.cause)
-    print(value_error.context)
-    print(value_error.instance)
-    print(value_error.parent)
-    print(value_error.path)
-    print(value_error.relative_path)
-    print(value_error.relative_schema_path)
-    print(value_error.schema)
-    print(value_error.schema_path)
-    print(value_error.validator)
-    print(value_error.validator_value)
+# validate({"name": "Eggs", "price": 34.99}, schema)
+validator = Draft4Validator(schema)
+for err in sorted(validator.iter_errors({
+    "data": {
+        "type": "hosts",
+        "attributes": {
+            "host": '',
+            "hostname": '',
+            "port": 0,
+            "username": '',
+            "password": ''
+        }
+    }
+}), key=str):
+    print(err.path)
+    print(err.validator)
+    print(err.validator_value)
+    print(err.message)
+    print('=====================')

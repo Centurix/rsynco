@@ -10,33 +10,58 @@
         <section class="modal-card-body">
           <div class="field">
             <label class="label">Name</label>
-            <div class="control">
-              <input class="input" type="text" placeholder="Name" v-model="job.name">
+            <div class="control has-icons-right">
+              <input v-bind:class="{'input': true, 'is-danger': isValid('name')}" type="text" placeholder="Name" v-model="job.name">
+              <span v-show="isValid('name')" class="icon is-small is-right">
+                <i class="fa fa-warning"></i>
+              </span>
             </div>
+            <p v-show="!isValid('name')" class="help">A name for this job is required</p>
+            <p v-show="isValid('name')" class="help is-danger">Invalid job name</p>
           </div>
           <div class="field">
             <label class="label">From Host</label>
-            <div class="control">
-              <input class="input" type="text" placeholder="From Host" v-model="job.from_host">
+            <div class="control has-icons-right">
+              <input v-bind:class="{'input': true, 'is-danger': isValid('from_host')}" type="text" placeholder="From Host" v-model="job.from_host">
+              <span v-show="isValid('from_host')" class="icon is-small is-right">
+                <i class="fa fa-warning"></i>
+              </span>
             </div>
+            <p v-show="!isValid('from_host')" class="help">A host for this job is required</p>
+            <p v-show="isValid('from_host')" class="help is-danger">Invalid host</p>
           </div>
           <div class="field">
             <label class="label">From Path</label>
-            <div class="control">
-              <input class="input" type="text" placeholder="From Path" v-model="job.from_path">
+            <div class="control has-icons-right">
+              <input v-bind:class="{'input': true, 'is-danger': isValid('from_path')}" type="text" placeholder="From Path" v-model="job.from_path">
+              <span v-show="isValid('from_path')" class="icon is-small is-right">
+                <i class="fa fa-warning"></i>
+              </span>
             </div>
+            <p v-show="!isValid('from_path')" class="help">A path for this job is required</p>
+            <p v-show="isValid('from_path')" class="help is-danger">Invalid path</p>
           </div>
           <div class="field">
             <label class="label">To Host</label>
-            <div class="control">
-              <input class="input" type="text" placeholder="To Host" v-model="job.to_host">
+            <div class="control has-icons-right">
+              <input v-bind:class="{'input': true, 'is-danger': isValid('to_host')}" type="text" placeholder="To Host" v-model="job.to_host">
+              <span v-show="isValid('to_host')" class="icon is-small is-right">
+                <i class="fa fa-warning"></i>
+              </span>
             </div>
+            <p v-show="!isValid('to_host')" class="help">A host for this job is required</p>
+            <p v-show="isValid('to_host')" class="help is-danger">Invalid host</p>
           </div>
           <div class="field">
             <label class="label">To Path</label>
-            <div class="control">
-              <input class="input" type="text" placeholder="To Path" v-model="job.to_path">
+            <div class="control has-icons-right">
+              <input v-bind:class="{'input': true, 'is-danger': isValid('to_path')}" type="text" placeholder="To Path" v-model="job.to_path">
+              <span v-show="isValid('to_path')" class="icon is-small is-right">
+                <i class="fa fa-warning"></i>
+              </span>
             </div>
+            <p v-show="!isValid('to_path')" class="help">A path for this job is required</p>
+            <p v-show="isValid('to_path')" class="help is-danger">Invalid path</p>
           </div>
         </section>
         <footer class="modal-card-foot">
@@ -52,6 +77,7 @@
 <script>
 import axios from 'axios'
 import EventBus from '../eventbus'
+import Validation from '../mixins/validation'
 
 export default {
   name: 'job',
@@ -59,41 +85,37 @@ export default {
     return {
       shown: false,
       editing: false,
-      job: {
-        name: '',
-        from_host: '',
-        from_path: '',
-        to_host: '',
-        to_path: ''
-      }
+      job: this.emptyJob()
     }
   },
+  mixins: [Validation],
   methods: {
-    newJob: function () {
-      // Add a new job
-      this.editing = false
-      this.job = {
+    emptyJob: function () {
+      return {
         name: '',
         from_host: '',
         from_path: '',
         to_host: '',
         to_path: ''
       }
+    },
+    newJob: function () {
+      this.editing = false
+      this.job = this.emptyJob()
       this.show()
     },
     editJob: function (name) {
-      // Edit the job by name
       this.editing = true
       axios.get(process.env.API_SERVER + '/jobs/' + name)
         .then((response) => {
           this.job = response.data.data
-        }, (error) => {
+        })
+        .catch((error) => {
           console.log(error)
         })
       this.show()
     },
     add: function () {
-      // Add a new job
       axios.post(process.env.API_SERVER + '/jobs', {
         data: {
           type: 'jobs',
@@ -104,13 +126,12 @@ export default {
           console.log('Added!')
           this.hide()
           EventBus.$emit('JOBS_CHANGED')
-        }, (error) => {
-          // Failed validation etc.
-          console.log(error)
+        })
+        .catch((error) => {
+          this.processValidationErrors(error)
         })
     },
     update: function () {
-      // Save the host
       axios.put(process.env.API_SERVER + '/jobs/' + this.job.name, {
         data: {
           type: 'jobs',
@@ -121,16 +142,14 @@ export default {
           console.log('Updated!')
           this.hide()
           EventBus.$emit('JOBS_CHANGED')
-        }, (error) => {
-          // Failed validation etc.
-          console.log(error)
         })
-    },
-    cancel: function () {
-      this.hide()
+        .catch((error) => {
+          this.processValidationErrors(error)
+        })
     },
     show: function () {
       this.shown = true
+      this.clearValidationErrors()
     },
     hide: function () {
       this.shown = false
