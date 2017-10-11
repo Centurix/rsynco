@@ -2,7 +2,7 @@ import cherrypy
 from rsynco.libs.repositories.host_repository import HostRepository
 from .apihandler import ApiHandler
 from rsynco.libs.validation import validation
-from rsynco.api.transformers.hosts.host_transformer import HostTransformer
+from rsynco.api.transformers.host_transformer import HostTransformer
 
 
 class Hosts(ApiHandler):
@@ -17,7 +17,7 @@ class Hosts(ApiHandler):
 
     @validation
     def POST(self):
-        data = cherrypy.request.json['data']['attributes']
+        data = cherrypy.request.json['data'][0]['attributes']
         self._hostRepository.add_host(
             data['host'],
             data['hostname'],
@@ -29,7 +29,7 @@ class Hosts(ApiHandler):
 
     @validation
     def PUT(self, name):
-        data = cherrypy.request.json['data']['attributes']
+        data = cherrypy.request.json['data'][0]['attributes']
         self._hostRepository.update_host(
             name,
             data['hostname'],

@@ -11,8 +11,7 @@ import cherrypy
 """
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
-# TODO: Create transformers for JSONAPI output serialisation
-# TODO: Create transformers for sending data to the backend
+# TODO: Lock down the JSON validation
 # TODO: Create self-documenting API endpoints for blueprint
 # TODO: Tests
 # TODO: Make sure this is init.d/systemd/whatever friendly

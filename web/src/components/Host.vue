@@ -70,6 +70,7 @@
 import axios from 'axios'
 import EventBus from '../eventbus'
 import Validation from '../mixins/validation'
+import HostTransformers from '../mixins/transformers/host'
 
 export default {
   name: 'host',
@@ -80,10 +81,19 @@ export default {
       host: this.emptyHost()
     }
   },
-  mixins: [Validation],
+  mixins: [
+    Validation,
+    HostTransformers
+  ],
   methods: {
     emptyHost: function () {
-      return {host: '', hostname: '', port: 22, username: '', password: ''}
+      return {
+        host: '',
+        hostname: '',
+        port: 22,
+        username: '',
+        password: ''
+      }
     },
     newHost: function () {
       this.editing = false
@@ -94,20 +104,15 @@ export default {
       this.editing = true
       axios.get(process.env.API_SERVER + '/hosts/' + name)
         .then((response) => {
-          this.host = response.data.data
+          this.host = response.data.data[0].attributes
+          this.show()
         })
         .catch((error) => {
           console.log(error)
         })
-      this.show()
     },
     add: function () {
-      axios.post(process.env.API_SERVER + '/hosts', {
-        data: {
-          type: 'hosts',
-          attributes: this.host
-        }
-      })
+      axios.post(process.env.API_SERVER + '/hosts', this.newHostTransformer(this.host))
         .then((response) => {
           this.hide()
           EventBus.$emit('HOSTS_CHANGED')
@@ -117,12 +122,7 @@ export default {
         })
     },
     update: function () {
-      axios.put(process.env.API_SERVER + '/hosts/' + this.host.host, {
-        data: {
-          type: 'hosts',
-          attributes: this.host
-        }
-      })
+      axios.put(process.env.API_SERVER + '/hosts/' + this.host.host, this.editHostTransformer(this.host))
         .then((response) => {
           this.hide()
           EventBus.$emit('HOSTS_CHANGED')

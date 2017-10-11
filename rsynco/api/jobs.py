@@ -2,7 +2,7 @@ import cherrypy
 from .apihandler import ApiHandler
 from rsynco.libs.repositories.job_repository import JobRepository
 from rsynco.libs.validation import validation
-from rsynco.api.transformers.jobs.job_transformer import JobTransformer
+from rsynco.api.transformers.job_transformer import JobTransformer
 
 
 class Jobs(ApiHandler):
@@ -17,7 +17,7 @@ class Jobs(ApiHandler):
 
     @validation
     def POST(self):
-        data = cherrypy.request.json['data']['attributes']
+        data = cherrypy.request.json['data'][0]['attributes']
         self._JobRepository.add_job(
             data['name'],
             data['from_host'],
@@ -29,7 +29,7 @@ class Jobs(ApiHandler):
 
     @validation
     def PUT(self, name):
-        data = cherrypy.request.json['data']['attributes']
+        data = cherrypy.request.json['data'][0]['attributes']
         self._JobRepository.update_job(
             name,
             data['from_host'],

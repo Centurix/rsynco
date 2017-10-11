@@ -12,7 +12,8 @@ class HostTransformer:
                     'hostname': host['hostname'],
                     'port': host['port'],
                     'username': host['username'],
-                    'password': host['password']
+                    'password': host['password'],
+                    'type': host['type']
                 }
             })
 

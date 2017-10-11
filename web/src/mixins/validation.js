@@ -5,6 +5,9 @@ export default {
     }
   },
   methods: {
+    test: function () {
+      alert('MIXIN WORKING')
+    },
     clearValidationErrors: function () {
       this.validationErrors = []
     },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="shown" class="modal" v-bind:class="{ 'is-active': shown, 'modal': true }">
+    <div class="modal" v-bind:class="{ 'is-active': shown, 'modal': true }">
       <div class="modal-background" v-on:click="hide"></div>
       <div class="modal-card">
         <header class="modal-card-head">
@@ -78,6 +78,7 @@
 import axios from 'axios'
 import EventBus from '../eventbus'
 import Validation from '../mixins/validation'
+import JobTransformers from '../mixins/transformers/job'
 
 export default {
   name: 'job',
@@ -88,7 +89,10 @@ export default {
       job: this.emptyJob()
     }
   },
-  mixins: [Validation],
+  mixins: [
+    Validation,
+    JobTransformers
+  ],
   methods: {
     emptyJob: function () {
       return {
@@ -108,7 +112,7 @@ export default {
       this.editing = true
       axios.get(process.env.API_SERVER + '/jobs/' + name)
         .then((response) => {
-          this.job = response.data.data
+          this.job = response.data.data[0].attributes
         })
         .catch((error) => {
           console.log(error)
@@ -116,14 +120,8 @@ export default {
       this.show()
     },
     add: function () {
-      axios.post(process.env.API_SERVER + '/jobs', {
-        data: {
-          type: 'jobs',
-          attributes: this.job
-        }
-      })
+      axios.post(process.env.API_SERVER + '/jobs', this.newJobTransformer(this.job))
         .then((response) => {
-          console.log('Added!')
           this.hide()
           EventBus.$emit('JOBS_CHANGED')
         })
@@ -132,14 +130,8 @@ export default {
         })
     },
     update: function () {
-      axios.put(process.env.API_SERVER + '/jobs/' + this.job.name, {
-        data: {
-          type: 'jobs',
-          attributes: this.job
-        }
-      })
+      axios.put(process.env.API_SERVER + '/jobs/' + this.job.name, this.editJobTransformer(this.job))
         .then((response) => {
-          console.log('Updated!')
           this.hide()
           EventBus.$emit('JOBS_CHANGED')
         })
