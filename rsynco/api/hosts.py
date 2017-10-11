@@ -25,7 +25,8 @@ class Hosts(ApiHandler):
             data['username'],
             data['password']
         )
-        return {'data': 'ADDED'}
+        cherrypy.response.status = 201
+        return HostTransformer.hosts([data])
 
     @validation
     def PUT(self, name):
@@ -37,7 +38,7 @@ class Hosts(ApiHandler):
             data['username'],
             data['password']
         )
-        return {'data': 'UPDATED'}
+        return HostTransformer.hosts([data])
 
     def DELETE(self, name):
         self._hostRepository.delete_host(name)

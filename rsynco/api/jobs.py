@@ -25,6 +25,7 @@ class Jobs(ApiHandler):
             data['to_host'],
             data['to_path']
         )
+        cherrypy.response.status = 201
         return {'data': 'ADDED'}
 
     @validation

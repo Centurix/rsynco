@@ -13,7 +13,7 @@ class HostTransformer:
                     'port': host['port'],
                     'username': host['username'],
                     'password': host['password'],
-                    'type': host['type']
+                    'type': host.get('type', 'rsynco')
                 }
             })
 

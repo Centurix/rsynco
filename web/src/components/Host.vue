@@ -11,13 +11,13 @@
           <div class="field">
             <label class="label">Name</label>
             <div class="control has-icons-right">
-              <input v-bind:class="{'is-danger': isValid('host'), 'input': true}" type="text" placeholder="Name" v-model="host.host">
+              <input v-bind:class="{'is-danger': isValid('host'), 'input': true}" type="text" placeholder="Name" v-model="host.host" :disabled="editing">
               <span v-show="isValid('host')" class="icon is-small is-right">
                 <i class="fa fa-warning"></i>
               </span>
             </div>
-            <p v-show="!isValid('host')" class="help">A name for this host is required</p>
-            <p v-show="isValid('host')" class="help is-danger">Invalid host name</p>
+            <p v-show="!isValid('host') && !editing" class="help">A name for this host is required</p>
+            <p v-show="isValid('host') && !editing" class="help is-danger">Invalid host name</p>
           </div>
           <div class="field">
             <label class="label">Hostname</label>
