@@ -2,6 +2,7 @@ import cherrypy
 from .apihandler import ApiHandler
 from rsynco.libs.repositories.job_repository import JobRepository
 from rsynco.libs.validation import validation
+from rsynco.api.transformers.jobs.job_transformer import JobTransformer
 
 
 class Jobs(ApiHandler):
@@ -10,9 +11,9 @@ class Jobs(ApiHandler):
 
     def GET(self, name=None):
         if name is not None:
-            return {'data': self._JobRepository.get_job(name)}
+            return JobTransformer.jobs([self._JobRepository.get_job(name)])
 
-        return {'data': self._JobRepository.get_jobs()}
+        return JobTransformer.jobs(self._JobRepository.get_jobs())
 
     @validation
     def POST(self):

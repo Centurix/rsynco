@@ -2,6 +2,7 @@ import cherrypy
 from rsynco.libs.repositories.host_repository import HostRepository
 from .apihandler import ApiHandler
 from rsynco.libs.validation import validation
+from rsynco.api.transformers.hosts.host_transformer import HostTransformer
 
 
 class Hosts(ApiHandler):
@@ -10,9 +11,9 @@ class Hosts(ApiHandler):
 
     def GET(self, name=None):
         if name is not None:
-            return {'data': self._hostRepository.get_host(name)}
+            return HostTransformer.hosts([self._hostRepository.get_host(name)])
 
-        return {'data': self._hostRepository.get_all_hosts()}
+        return HostTransformer.hosts(self._hostRepository.get_all_hosts())
 
     @validation
     def POST(self):

@@ -15,14 +15,18 @@
         </thead>
         <tbody>
           <tr v-for="job in jobs">
-            <td>{{ job.name }}</td>
-            <td>{{ job.from_host }}</td>
-            <td>{{ job.from_path }}</td>
-            <td>{{ job.to_host }}</td>
-            <td>{{ job.to_path }}</td>
+            <td>{{ job.attributes.name }}</td>
+            <td>{{ job.attributes.from_host }}</td>
+            <td>{{ job.attributes.from_path }}</td>
+            <td>{{ job.attributes.to_host }}</td>
+            <td>{{ job.attributes.to_path }}</td>
             <td class="has-text-right">
-              <button class="button is-primary is-small" v-on:click="editJob(job.name)"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
-              <button class="button is-danger is-small" v-on:click="deleteJob(job.name)"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete</button>
+              <button class="button is-primary is-small" v-on:click="editJob(job.attributes.name)">
+                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit
+              </button>
+              <button class="button is-danger is-small" v-on:click="deleteJob(job.attributes.name)">
+                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -53,7 +57,6 @@ export default {
   },
   methods: {
     editJob: function (name) {
-      // Trigger hosts modal popup
       this.$refs.job.editJob(name)
     },
     newJob: function () {
@@ -63,8 +66,8 @@ export default {
       axios.delete(process.env.API_SERVER + '/jobs/' + name)
         .then((response) => {
           this.loadJobs()
-          console.log(response)
-        }, (error) => {
+        })
+        .catch((error) => {
           console.log(error)
         })
     },
@@ -72,8 +75,8 @@ export default {
       axios.get(process.env.API_SERVER + '/jobs')
         .then((response) => {
           this.jobs = response.data.data
-          console.log(response)
-        }, (error) => {
+        })
+        .catch((error) => {
           console.log(error)
         })
     }

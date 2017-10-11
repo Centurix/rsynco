@@ -8,6 +8,11 @@
         <p class="is-centered has-text-centered">
           rsync Management
         </p>
+        <ul>
+          <li>Python 3</li>
+          <li>Vue.js</li>
+          <li>JSONAPI Compliant API</li>
+        </ul>
       </div>
     </div>
   </section>

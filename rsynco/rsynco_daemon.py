@@ -11,8 +11,9 @@ import cherrypy
 """
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
-# TODO: Validate JSON with JSON SCHEMA, maybe as decorators?
 # TODO: Create transformers for JSONAPI output serialisation
+# TODO: Create transformers for sending data to the backend
+# TODO: Create self-documenting API endpoints for blueprint
 # TODO: Tests
 # TODO: Make sure this is init.d/systemd/whatever friendly
 # TODO: Include boilerplate for pip, pypi and other repositories
@@ -20,6 +21,8 @@ To pause rsync, send the TSTP signal. Start rsync with --partial.
 # TODO: Add a build process to pipelines and dump a release
 # TODO: Use exceptions throughout
 # TODO: Figure out how to pass the current server address to the SPA
+# TODO: Fix all the axios/cherrypy integrations to make sure they are JSONAPI compliant
+
 
 class RsyncoDaemon(Daemon):
     def __init__(self, pidfile):

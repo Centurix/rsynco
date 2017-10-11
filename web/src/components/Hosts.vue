@@ -20,16 +20,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="host in hosts" v-show="host.type == 'rsynco' || showSystemHosts">
-            <td>{{ host.host }}</td>
-            <td>{{ host.hostname }}</td>
-            <td>{{ host.port }}</td>
-            <td>{{ host.username }}</td>
-            <td>{{ host.password }}</td>
+          <tr v-for="host in hosts" v-show="host.attributes.type == 'rsynco' || showSystemHosts">
+            <td>{{ host.attributes.host }}</td>
+            <td>{{ host.attributes.hostname }}</td>
+            <td>{{ host.attributes.port }}</td>
+            <td>{{ host.attributes.username }}</td>
+            <td>{{ host.attributes.password }}</td>
             <td class="has-text-right">
-              <span v-show="host.type == 'system'">SSH Config Host (Non-edit)</span>
-              <button v-show="host.type == 'rsynco'" class="button is-primary is-small" v-on:click="editHost(host.host)"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>
-              <button v-show="host.type == 'rsynco'" class="button is-danger is-small" v-on:click="deleteHost(host.host)"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete</button>
+              <span v-show="host.attributes.type == 'system'">SSH Config Host (Non-edit)</span>
+              <button v-show="host.attributes.type == 'rsynco'" class="button is-primary is-small" v-on:click="editHost(host.attributes.host)">
+                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit
+              </button>
+              <button v-show="host.attributes.type == 'rsynco'" class="button is-danger is-small" v-on:click="deleteHost(host.attributes.host)">
+                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -71,8 +75,8 @@ export default {
       axios.delete(process.env.API_SERVER + '/hosts/' + name)
         .then((response) => {
           this.loadHosts()
-          console.log(response)
-        }, (error) => {
+        })
+        .catch((error) => {
           console.log(error)
         })
     },
@@ -80,8 +84,8 @@ export default {
       axios.get(process.env.API_SERVER + '/hosts')
         .then((response) => {
           this.hosts = response.data.data
-          console.log(response)
-        }, (error) => {
+        })
+        .catch((error) => {
           console.log(error)
         })
     }
