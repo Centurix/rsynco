@@ -17,6 +17,7 @@ class Jobs(ApiHandler):
 
     @validation
     def POST(self):
+        # TODO: Why is the new job validation failing?
         data = cherrypy.request.json['data'][0]['attributes']
         self._JobRepository.add_job(
             data['name'],
@@ -26,7 +27,7 @@ class Jobs(ApiHandler):
             data['to_path']
         )
         cherrypy.response.status = 201
-        return {'data': 'ADDED'}
+        return JobTransformer.jobs([data])
 
     @validation
     def PUT(self, name):
@@ -38,7 +39,7 @@ class Jobs(ApiHandler):
             data['to_host'],
             data['to_path']
         )
-        return {'data': 'UPDATED'}
+        return JobTransformer.jobs([data])
 
     def DELETE(self, name):
         self._JobRepository.delete_job(name)
