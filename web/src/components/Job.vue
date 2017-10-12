@@ -22,9 +22,10 @@
           <div class="field">
             <label class="label">From Host</label>
             <div class="control has-icons-right">
-              <div class="select" v-bind:class="{'select': true, 'is-danger': isValid('from_host')}" >
+              <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('from_host')}" >
                 <select v-model="job.from_host">
                   <option disabled value="">Select a host</option>
+                  <option value="localhost">localhost</option>
                   <option v-for="host in hosts">{{ host.attributes.host }}</option>
                 </select>
               </div>
@@ -46,10 +47,13 @@
           <div class="field">
             <label class="label">To Host</label>
             <div class="control has-icons-right">
-              <input v-bind:class="{'input': true, 'is-danger': isValid('to_host')}" type="text" placeholder="To Host" v-model="job.to_host">
-              <span v-show="isValid('to_host')" class="icon is-small is-right">
-                <i class="fa fa-warning"></i>
-              </span>
+              <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('to_host')}" >
+                <select v-model="job.to_host">
+                  <option disabled value="">Select a host</option>
+                  <option value="localhost">localhost</option>
+                  <option v-for="host in hosts">{{ host.attributes.host }}</option>
+                </select>
+              </div>
             </div>
             <p v-show="!isValid('to_host')" class="help">A host for this job is required</p>
             <p v-show="isValid('to_host')" class="help is-danger">Invalid host</p>
