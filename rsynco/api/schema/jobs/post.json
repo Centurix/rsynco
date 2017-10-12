@@ -1,54 +1,32 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {},
+  "type": "object",
+  "required": ["data"],
+  "additionalProperties": false,
   "properties": {
     "data": {
-      "properties": {
-        "attributes": {
-          "properties": {
-            "name": {
-              "type": "string",
-              "minLength": 1
-            },
-            "from_host": {
-              "type": "string",
-              "minLength": 1
-            },
-            "from_path": {
-              "type": "string",
-              "minLength": 1
-            },
-            "to_host": {
-              "type": "string",
-              "minLength": 1
-            },
-            "to_path": {
-              "type": "string",
-              "minLength": 1
+      "additionalItems": false,
+      "items": {
+        "type": "object",
+        "required": ["attributes"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {"type": "string"},
+          "attributes": {
+            "type": "object",
+            "required": ["name", "from_host", "from_path", "to_host", "to_path"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "from_host": {"type": "string", "minLength": 1},
+              "from_path": {"type": "string", "minLength": 1},
+              "to_host": {"type": "string", "minLength": 1},
+              "to_path": {"type": "string", "minLength": 1}
             }
-          },
-          "type": "object",
-          "required": [
-            "name",
-            "from_host",
-            "from_path",
-            "to_host",
-            "to_path"
-          ]
-        },
-        "type": {
-          "type": "string"
+          }
         }
-      },
-      "type": "array",
-      "required": [
-        "attributes"
-      ]
+      }
     }
-  },
-  "type": "object",
-  "required": [
-    "data"
-  ],
-  "additionalProperties": false
+  }
 }

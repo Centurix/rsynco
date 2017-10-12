@@ -1,7 +1,7 @@
 from .repository import Repository
 from ..ssh import SshConfig
 from pathlib import Path
-import os
+import logging
 
 
 class HostRepository(Repository):
@@ -15,6 +15,7 @@ class HostRepository(Repository):
         the SSH config file
         :return:
         """
+        logging.debug('REPOSITORY: Getting all hosts')
         hosts = list()
         # Add hosts from the SSH config file
         hosts.extend(self.get_system_ssh_config_hosts())
@@ -24,7 +25,7 @@ class HostRepository(Repository):
         return hosts
 
     def get_user_ssh_config_hosts(self):
-        ssh_config_file = Path(os.path.join(str(Path.home()), '.ssh', 'config'))
+        ssh_config_file = Path(str(Path.home()), '.ssh', 'config')
         if ssh_config_file.is_file():
             ssh_config = SshConfig(ssh_config_file)
             return ssh_config.hosts
@@ -33,7 +34,7 @@ class HostRepository(Repository):
 
     def get_system_ssh_config_hosts(self):
         # Just in case there are system wide defined hosts
-        ssh_config_file = Path(os.path.join('etc', 'ssh', 'ssh_config'))
+        ssh_config_file = Path('/etc', 'ssh', 'ssh_config')
         if ssh_config_file.is_file():
             ssh_config = SshConfig(ssh_config_file)
             return ssh_config.hosts
@@ -41,6 +42,7 @@ class HostRepository(Repository):
         return list()
 
     def get_hosts(self):
+        logging.debug('REPOSITORY: Getting rsynco hosts')
         hosts = list()
         for host in self.config.data['hosts']:
             hosts.append({
@@ -54,6 +56,7 @@ class HostRepository(Repository):
         return hosts
 
     def get_host(self, name):
+        logging.debug('REPOSITORY: Getting host {}'.format(name))
         host = self.config.data['hosts'][name]
         return {
             'host': name,
@@ -65,6 +68,7 @@ class HostRepository(Repository):
         }
 
     def add_host(self, host, hostname, port, username, password):
+        logging.debug('REPOSITORY: Adding host {}'.format(host))
         self.config.data['hosts'][host] = {
             'host': host,
             'hostname': hostname,
@@ -75,6 +79,7 @@ class HostRepository(Repository):
         return self.config.update()
 
     def update_host(self, host, hostname, port, username, password):
+        logging.debug('REPOSITORY: Updating host {}'.format(host))
         self.config.data['hosts'][host]['hostname'] = hostname
         self.config.data['hosts'][host]['port'] = port
         self.config.data['hosts'][host]['username'] = username
@@ -82,6 +87,7 @@ class HostRepository(Repository):
         return self.config.update()
 
     def delete_host(self, host):
+        logging.debug('REPOSITORY: Deleting host {}'.format(host))
         # Remove the host from the configuration file
         del self.config.data['hosts'][host]
         return self.config.update()

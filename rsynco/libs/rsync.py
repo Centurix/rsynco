@@ -4,6 +4,7 @@ import os
 import signal
 import datetime
 import uuid
+import logging
 
 
 class Rsync:
@@ -17,6 +18,7 @@ class Rsync:
         pass
 
     def process(self, from_location, to_location):
+        logging.debug('Starting rsync process from {} to {}'.format(from_location, to_location))
         with open('/tmp/rsync_%s.log' % uuid.uuid4(), 'w') as logfile:
             psutil.Popen(
                 ['rsync', '--info=progress2', '--partial', from_location, to_location],
@@ -26,6 +28,7 @@ class Rsync:
         return
 
     def list_rsync_tasks(self):
+        logging.debug('Acquiring a list of current rsync tasks...')
         tasks = list()
         for proc in psutil.process_iter():
             if proc.name() == 'rsync' and len(proc.children()) == 0:
@@ -40,12 +43,15 @@ class Rsync:
         return tasks
 
     def pause(self, pid):
+        logging.debug('Pausing rsync task {}...'.format(pid))
         os.kill(pid, signal.SIGTSTP)
 
     def resume(self, pid):
+        logging.debug('Resuming rsync task {}...'.format(pid))
         os.kill(pid, signal.SIGCONT)
 
     def stop(self, pid):
+        logging.debug('Stopping rsync task {}...'.format(pid))
         os.kill(pid, signal.SIGTERM)
 
     def get_progress(self, log_file):
@@ -58,13 +64,16 @@ class Rsync:
         if log_file is None or not os.path.isfile(log_file):
             return -1
 
+        logging.debug('Fetching rsync progress from {}'.format(log_file))
         log = open(log_file, 'r')
         content = log.read()
         log.close()
         matches = re.findall(' (\d*)\% ', content)
         if len(matches) > 0:
+            logging.debug('Progress {}%'.format(matches[-1]))
             return matches[-1]
 
+        logging.debug('Could not acquire progress')
         return 100
 
     def find_log_file(self, open_files):

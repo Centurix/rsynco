@@ -4,13 +4,16 @@ from rsynco.api.hosts import Hosts
 from rsynco.api.jobs import Jobs
 from rsynco.api.root import Root
 from rsynco import Config
-
+import logging
 import os
 import cherrypy
 
 """
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
+# TODO: Convert activity page to JSONAPI
+# TODO: Add logging
+# TODO: Adding a new blank job doesn't fail validation
 # TODO: Lock down the JSON validation
 # TODO: Create self-documenting API endpoints for blueprint
 # TODO: Tests
@@ -21,6 +24,7 @@ To pause rsync, send the TSTP signal. Start rsync with --partial.
 # TODO: Use exceptions throughout
 # TODO: Figure out how to pass the current server address to the SPA
 # TODO: Fix all the axios/cherrypy integrations to make sure they are JSONAPI compliant
+# TODO: Force reload of ini settings for Jobs and Hosts in case another process changes them
 
 
 class RsyncoDaemon(Daemon):
@@ -29,6 +33,7 @@ class RsyncoDaemon(Daemon):
         self.root = os.path.join(os.path.dirname(__file__), "..", "web", "dist")
 
     def run(self):
+        logging.debug('DAEMON SPAWNED')
         config = Config()
         rest_config = {
             '/': {
@@ -42,8 +47,10 @@ class RsyncoDaemon(Daemon):
             }
         }
 
+        logging.debug('Init port and interface...')
         cherrypy.config.update({'server.socket_port': config.data['port'], 'server.socket_host': config.data['address']})
 
+        logging.debug('Adding CherryPy endpoints...')
         cherrypy.tree.mount(Activity(), '/activity', config=rest_config)
         cherrypy.tree.mount(Hosts(), '/hosts', config=rest_config)
         cherrypy.tree.mount(Jobs(), '/jobs', config=rest_config)
@@ -54,5 +61,7 @@ class RsyncoDaemon(Daemon):
                 'tools.staticdir.index': 'index.html'
             }
         })
+
+        logging.debug('Starting CherryPy...')
         cherrypy.engine.start()
         cherrypy.engine.block()

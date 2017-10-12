@@ -3,6 +3,7 @@ import os
 import time
 import atexit
 import signal
+import logging
 
 
 class Daemon:
@@ -19,7 +20,7 @@ class Daemon:
             if pid > 0:
                 sys.exit(self.EXIT_OK)
         except OSError as err:
-            sys.stderr.write('fork #1 failed: {0}\n'.format(err))
+            logging.error('fork #1 failed: {0}'.format(err))
             sys.exit(self.EXIT_OTHER_ERROR)
 
         os.chdir('/')
@@ -31,7 +32,7 @@ class Daemon:
             if pid > 0:
                 sys.exit(self.EXIT_OK)
         except OSError as err:
-            sys.stderr.write('fork #2 failed: {0}\n'.format(err))
+            logging.error('fork #2 failed: {0}'.format(err))
             sys.exit(self.EXIT_OTHER_ERROR)
 
         sys.stdout.flush()
@@ -62,8 +63,7 @@ class Daemon:
             pid = None
 
         if pid:
-            message = "pidfile {0} already exist. Daemon already running?\n"
-            sys.stderr.write(message.format(self.pidfile))
+            logging.warning("pidfile {0} already exist. Daemon already running?".format(self.pidfile))
             sys.exit(self.EXIT_OTHER_ERROR)
 
         self.daemonize()
@@ -77,8 +77,7 @@ class Daemon:
             pid = None
 
         if not pid:
-            message = "pidfile {0} does not exist. Daemon not running?\n"
-            sys.stderr.write(message.format(self.pidfile))
+            logging.warning("pidfile {0} does not exist. Daemon not running?".format(self.pidfile))
             return
 
         try:
@@ -91,7 +90,7 @@ class Daemon:
                 if os.path.exists(self.pidfile):
                     os.remove(self.pidfile)
             else:
-                print(str(err.args))
+                logging.error(str(err.args))
                 sys.exit(self.EXIT_OTHER_ERROR)
 
     def restart(self):
@@ -106,21 +105,17 @@ class Daemon:
             pid = None
 
         if not pid:
-            message = "Service not running\n"
-            sys.stderr.write(message.format(self.pidfile))
+            logging.error("Service not running".format(self.pidfile))
             sys.exit(self.EXIT_OTHER_ERROR)
 
         try:
             os.kill(pid, 0)
         except OSError as err:
-            message = "Service not running\n"
-            sys.stderr.write(message.format(self.pidfile))
+            logging.error("Service not running".format(self.pidfile))
             sys.exit(self.EXIT_OTHER_ERROR)
 
-        message = "Service running\n"
-        sys.stderr.write(message.format(self.pidfile))
+        logging.info("Service running".format(self.pidfile))
         sys.exit(self.EXIT_OTHER_ERROR)
-
 
     def run(self):
         pass

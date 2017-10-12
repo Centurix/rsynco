@@ -1,4 +1,5 @@
 from .repository import Repository
+import logging
 
 
 class JobRepository(Repository):
@@ -6,6 +7,7 @@ class JobRepository(Repository):
     Storage class for hosts and jobs locally
     """
     def get_job(self, name):
+        logging.debug('REPOSITORY: Getting job {}'.format(name))
         job = self.config.data['jobs'][name]
         return {
             'name': name,
@@ -16,6 +18,7 @@ class JobRepository(Repository):
         }
 
     def get_jobs(self):
+        logging.debug('REPOSITORY: Getting all jobs')
         jobs = list()
         for job in self.config.data['jobs']:
             jobs.append({
@@ -28,6 +31,7 @@ class JobRepository(Repository):
         return jobs
 
     def add_job(self, name, from_host, from_path, to_host, to_path):
+        logging.debug('REPOSITORY: Adding job {}'.format(name))
         self.config.data['jobs'][name] = {
             'name': name,
             'from_host': from_host,
@@ -38,6 +42,7 @@ class JobRepository(Repository):
         return self.config.update()
 
     def update_job(self, name, from_host, from_path, to_host, to_path):
+        logging.debug('REPOSITORY: Updating job {}'.format(name))
         self.config.data['jobs'][name]['from_host'] = from_host
         self.config.data['jobs'][name]['from_path'] = from_path
         self.config.data['jobs'][name]['to_host'] = to_host
@@ -45,5 +50,6 @@ class JobRepository(Repository):
         return self.config.update()
 
     def delete_job(self, name):
+        logging.debug('REPOSITORY: Deleting job {}'.format(name))
         del self.config.data['jobs'][name]
         return self.config.update()

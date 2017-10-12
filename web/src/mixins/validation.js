@@ -12,7 +12,7 @@ export default {
       this.validationErrors = []
     },
     isValid: function (field) {
-      let validationError = this.validationErrors.find(function (obj) { return obj.path === 'data/attributes/' + field })
+      let validationError = this.validationErrors.find(function (obj) { return obj.path === 'data/0/attributes/' + field })
       return (typeof validationError === 'object')
     },
     processValidationErrors: function (error) {
