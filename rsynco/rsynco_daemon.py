@@ -11,10 +11,10 @@ import cherrypy
 """
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
-# TODO: Convert activity page to JSONAPI
-# TODO: Add logging
-# TODO: Adding a new blank job doesn't fail validation
-# TODO: Lock down the JSON validation
+# TODO: Validate job paths
+# TODO: Add ability to run jobs
+# TODO: Add path explorer to job creation
+# TODO: Add job scheduler
 # TODO: Create self-documenting API endpoints for blueprint
 # TODO: Tests
 # TODO: Make sure this is init.d/systemd/whatever friendly
@@ -23,7 +23,6 @@ To pause rsync, send the TSTP signal. Start rsync with --partial.
 # TODO: Add a build process to pipelines and dump a release
 # TODO: Use exceptions throughout
 # TODO: Figure out how to pass the current server address to the SPA
-# TODO: Fix all the axios/cherrypy integrations to make sure they are JSONAPI compliant
 # TODO: Force reload of ini settings for Jobs and Hosts in case another process changes them
 
 

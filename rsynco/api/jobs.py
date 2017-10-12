@@ -20,7 +20,6 @@ class Jobs(ApiHandler):
 
     @validation
     def POST(self):
-        # TODO: Why is the new job validation failing?
         data = cherrypy.request.json['data'][0]['attributes']
         logging.debug('API: Adding job {}'.format(data['name']))
         self._JobRepository.add_job(
