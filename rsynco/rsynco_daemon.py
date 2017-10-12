@@ -42,7 +42,7 @@ class RsyncoDaemon(Daemon):
                 'tools.response_headers.headers': [
                     ('Access-Control-Allow-Origin', '*'),
                     ('Access-Control-Allow-Headers', 'Content-Type'),
-                    ('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                    ('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
                 ]
             }
         }

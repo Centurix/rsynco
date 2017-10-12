@@ -27,6 +27,21 @@ class Rsync:
             os.wait()
         return
 
+    def get_rsync_task(self, pid):
+        try:
+            proc = psutil.Process(pid)
+            return {
+                'pid': proc.pid,
+                'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
+                'from': proc.cmdline()[-2],
+                'to': proc.cmdline()[-1],
+                'progress': self.get_progress(self.find_log_file(proc.open_files())),
+                'status': proc.status()
+            }
+        except psutil.NoSuchProcess as ex:
+            logging.debug('No such process {}'.format(pid))
+            return {'pid': '', 'started': 0, 'from': '', 'to': '', 'progress': 0, 'status': 'stopped'}
+
     def list_rsync_tasks(self):
         logging.debug('Acquiring a list of current rsync tasks...')
         tasks = list()

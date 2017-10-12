@@ -1,28 +1,35 @@
 from rsynco.libs.rsync import Rsync
 from .apihandler import ApiHandler
 import logging
+from rsynco.api.transformers.activity_transformer import ActivityTransformer
+import cherrypy
+from rsynco.libs.validation import validation
 
 
 class Activity(ApiHandler):
+    def __init__(self):
+        self._rsync = Rsync()
+
     def GET(self):
         logging.debug('API: Getting rsync activity')
-        test = Rsync()
-        return {'data': test.list_rsync_tasks()}
+        return ActivityTransformer.activities(self._rsync.list_rsync_tasks())
 
-    def POST(self, pid, action):
-        test = Rsync()
-        if action == "pause":
+    @validation
+    def PATCH(self, pid):
+        """
+        Perform actions based on the state field
+        """
+        data = cherrypy.request.json['data'][0]['attributes']
+        if data['status'] == 'pause':
             logging.debug('API: Pausing {}'.format(pid))
-            test.pause(int(pid))
-            return {'data': 'PAUSED'}
-        elif action == "resume":
+            self._rsync.pause(int(pid))
+        elif data['status'] == 'resume':
             logging.debug('API: Resuming {}'.format(pid))
-            test.resume(int(pid))
-            return {'data': 'RESUMED'}
-        elif action == "stop":
+            self._rsync.resume(int(pid))
+        elif data['status'] == 'stop':
             logging.debug('API: Stopping {}'.format(pid))
-            test.stop(int(pid))
-            return {'data': 'STOPPED'}
+            self._rsync.stop(int(pid))
+        else:
+            logging.debug('API: No action {}'.format(pid))
 
-        logging.debug('API: Invalid operation')
-        return {'data': 'NO_ACTION'}
+        return ActivityTransformer.activities([self._rsync.get_rsync_task(int(pid))])

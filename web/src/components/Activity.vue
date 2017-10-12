@@ -16,19 +16,21 @@
         </thead>
         <tbody>
           <tr v-for="item in items">
-            <td>{{ item.pid }}</td>
-            <td>{{ item.started }}</td>
-            <td>{{ duration(item.started) }} Seconds</td>
-            <td>{{ item.from }}</td>
-            <td>{{ item.to }}</td>
+            <td>{{ item.attributes.pid }}</td>
+            <td>{{ item.attributes.started }}</td>
+            <td>{{ duration(item.attributes.started) }} Seconds</td>
+            <td>{{ item.attributes.from }}</td>
+            <td>{{ item.attributes.to }}</td>
             <td>
-              <span v-if="item.progress == -1"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;Not monitored</span>
-              <progress v-if="item.progress > -1" class="progress is-primary is-large" v-bind:value="item.progress" max="100">{{ item.progress }}%</progress>
+              <span v-if="item.attributes.progress == -1">
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;Not monitored
+              </span>
+              <progress v-if="item.attributes.progress > -1" class="progress is-primary is-large" v-bind:value="item.attributes.progress" max="100">{{ item.attributes.progress }}%</progress>
             </td>
             <td>
-              <button v-if="paused(item.status)" class="button is-primary is-small" v-on:click="pause(item.pid)"><i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Pause</button>
-              <button v-if="!paused(item.status)" class="button is-primary is-small" v-on:click="resume(item.pid)"><i class="fa fa-play" aria-hidden="true"></i>&nbsp;Resume</button>
-              <button class="button is-danger is-small" v-on:click="stop(item.pid)"><i class="fa fa-stop" aria-hidden="true"></i>&nbsp;Stop</button>
+              <button v-if="paused(item.attributes.status)" class="button is-primary is-small" v-on:click="stateChange(item.attributes.pid, 'pause')"><i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Pause</button>
+              <button v-if="!paused(item.attributes.status)" class="button is-primary is-small" v-on:click="stateChange(item.attributes.pid, 'resume')"><i class="fa fa-play" aria-hidden="true"></i>&nbsp;Resume</button>
+              <button v-if="paused(item.attributes.status)" class="button is-danger is-small" v-on:click="stateChange(item.attributes.pid, 'stop')"><i class="fa fa-stop" aria-hidden="true"></i>&nbsp;Stop</button>
             </td>
           </tr>
         </tbody>
@@ -39,6 +41,7 @@
 
 <script>
 import axios from 'axios'
+import ActivityTransformers from '../mixins/transformers/activity'
 
 export default {
   name: 'activity',
@@ -48,6 +51,7 @@ export default {
       timer: null
     }
   },
+  mixins: [ActivityTransformers],
   methods: {
     loadActivity: function () {
       axios.get(process.env.API_SERVER + '/activity')
@@ -62,14 +66,8 @@ export default {
           console.log(error)
         })
     },
-    pause: function (pid) {
-      axios.post(process.env.API_SERVER + '/activity/' + pid + '/pause', {})
-    },
-    resume: function (pid) {
-      axios.post(process.env.API_SERVER + '/activity/' + pid + '/resume', {})
-    },
-    stop: function (pid) {
-      axios.post(process.env.API_SERVER + '/activity/' + pid + '/stop', {})
+    stateChange: function (pid, state) {
+      axios.patch(process.env.API_SERVER + '/activity/' + pid, this.changeStatusTransformer(pid, state))
     },
     paused: function (status) {
       return status === 'sleeping' || status === 'running'
