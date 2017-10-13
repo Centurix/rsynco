@@ -1,5 +1,7 @@
 from .repository import Repository
+from .host_repository import HostRepository
 import logging
+from rsynco.libs.rsync import Rsync
 
 
 class JobRepository(Repository):

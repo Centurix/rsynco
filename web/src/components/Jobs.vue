@@ -27,6 +27,9 @@
               <button class="button is-danger is-small" v-on:click="deleteJob(job.attributes.name)">
                 <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete
               </button>
+              <button class="button is-success is-small" v-on:click="stateChange(job.attributes.name, 'start')">
+                <i class="fa fa-play" aria-hidden="true"></i>&nbsp;Start
+              </button>
             </td>
           </tr>
         </tbody>
@@ -47,6 +50,7 @@
 import axios from 'axios'
 import Job from './Job'
 import EventBus from '../eventbus'
+import JobTransformers from '../mixins/transformers/job'
 
 export default {
   name: 'jobs',
@@ -55,12 +59,24 @@ export default {
       jobs: []
     }
   },
+  mixins: [
+    JobTransformers
+  ],
   methods: {
     editJob: function (name) {
       this.$refs.job.editJob(name)
     },
     newJob: function () {
       this.$refs.job.newJob()
+    },
+    stateChange: function (name, state) {
+      axios.patch(process.env.API_SERVER + '/jobs/' + name, this.changeStatusTransformer(name, state))
+        .then((response) => {
+          console.log('Job started')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     deleteJob: function (name) {
       axios.delete(process.env.API_SERVER + '/jobs/' + name)

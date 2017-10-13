@@ -25,6 +25,17 @@ export default {
           attributes: this.jobAttributes(job)
         }]
       }
+    },
+    changeStatusTransformer: function (job, status) {
+      return {
+        data: [{
+          type: 'jobs',
+          id: job,
+          attributes: {
+            'status': status
+          }
+        }]
+      }
     }
   }
 }

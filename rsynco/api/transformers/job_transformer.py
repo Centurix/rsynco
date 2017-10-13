@@ -19,3 +19,18 @@ class JobTransformer:
         return {
             'data': data_object
         }
+
+    @staticmethod
+    def empty_job():
+        return {
+            'data': [{
+                'type': 'jobs',
+                'attributes': {
+                    'name': '',
+                    'from_host': '',
+                    'from_path': '',
+                    'to_host': '',
+                    'to_path': ''
+                }
+            }]
+        }

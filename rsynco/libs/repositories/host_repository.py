@@ -57,15 +57,24 @@ class HostRepository(Repository):
 
     def get_host(self, name):
         logging.debug('REPOSITORY: Getting host {}'.format(name))
-        host = self.config.data['hosts'][name]
-        return {
-            'host': name,
-            'hostname': host['hostname'],
-            'port': host['port'],
-            'username': host['username'],
-            'password': host['password'],
-            'type': 'rsynco'
-        }
+        if name == 'localhost':
+            return {
+                'host': 'localhost',
+                'hostname': 'localhost',
+                'port': 22,
+                'username': '',
+                'password': '',
+                'type': 'system'
+            }
+
+        hosts = self.get_all_hosts()
+
+        host_index = next(index for (index, d) in enumerate(hosts) if d['host'] == name)
+
+        if host_index < 0:
+            return None
+
+        return hosts[host_index]
 
     def add_host(self, host, hostname, port, username, password):
         logging.debug('REPOSITORY: Adding host {}'.format(host))

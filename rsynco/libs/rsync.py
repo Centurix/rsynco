@@ -17,11 +17,40 @@ class Rsync:
     def __init__(self):
         pass
 
-    def process(self, from_location, to_location):
-        logging.debug('Starting rsync process from {} to {}'.format(from_location, to_location))
+    def process(self, from_host, from_path, to_host, to_path):
+        if from_host is None or to_host is None:
+            logging.error('Invalid host configuration, rsync not started')
+            return
+
+        if from_host['type'] == 'system':
+            source = '{}:{}'.format(from_host['host'], from_path)
+            dest = '{}:{}'.format(to_host['host'], to_path)
+        else:
+            source = '{}:{}'.format(from_host['hostname'], from_path)
+            dest = '{}:{}'.format(to_host['hostname'], to_path)
+
+        if from_host['hostname'] == 'localhost':
+            source = from_path
+
+        if to_host['hostname'] == 'localhost':
+            dest = to_path
+
+        logging.debug([
+            'rsync',
+            '--info=progress2',
+            '--partial',
+            source,
+            dest
+        ])
         with open('/tmp/rsync_%s.log' % uuid.uuid4(), 'w') as logfile:
             psutil.Popen(
-                ['rsync', '--info=progress2', '--partial', from_location, to_location],
+                [
+                    'rsync',
+                    '--info=progress2',
+                    '--partial',
+                    source,
+                    dest
+                ],
                 stdout=logfile
             )
             os.wait()
