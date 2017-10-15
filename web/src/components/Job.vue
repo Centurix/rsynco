@@ -69,6 +69,14 @@
             <p v-show="!isValid('to_path')" class="help">A path for this job is required</p>
             <p v-show="isValid('to_path')" class="help is-danger">Invalid path</p>
           </div>
+          <div class="field">
+            <label class="label">
+              <input type="checkbox">&nbsp;Scheduled
+            </label>
+          </div>
+          <div class="field">
+            <label class="label"></label>
+          </div>
         </section>
         <footer class="modal-card-foot">
           <button v-if="!editing" class="button is-primary" v-on:click="add">Add</button>
