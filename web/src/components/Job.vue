@@ -69,13 +69,66 @@
             <p v-show="!isValid('to_path')" class="help">A path for this job is required</p>
             <p v-show="isValid('to_path')" class="help is-danger">Invalid path</p>
           </div>
-          <div class="field">
-            <label class="label">
-              <input type="checkbox">&nbsp;Scheduled
-            </label>
+          <div class="field is-horizontal">
+            <label class="label">Repeat by the</label>&nbsp;
+            <div class="control">
+              <div class="select">
+                <select>
+                  <option>Not scheduled</option>
+                  <option>Second</option>
+                  <option>Minute</option>
+                  <option>Hour</option>
+                  <option>Day</option>
+                  <option>Week</option>
+                  <option>Month</option>
+                  <option>Year</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <label class="label"></label>
+          <div class="field is-horizontal">
+            <label class="label">Repeat every</label>&nbsp;
+            <div class="control">
+              <input type="number" class="input">
+            </div>&nbsp;
+            <span>Second(s)</span>
+          </div>
+          <div class="field is-horizontal">
+            <!-- Daily -->
+            <label class="label">Starts</label>&nbsp;
+            <div class="control">
+              <input type="text" class="input">
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <!-- Weekly -->
+            <label class="label">Every</label>&nbsp;
+            <label class="checkbox"><input type="checkbox">&nbsp;M</label>
+            <label class="checkbox"><input type="checkbox">&nbsp;T</label>
+            <label class="checkbox"><input type="checkbox">&nbsp;W</label>
+            <label class="checkbox"><input type="checkbox">&nbsp;T</label>
+            <label class="checkbox"><input type="checkbox">&nbsp;F</label>
+            <label class="checkbox"><input type="checkbox">&nbsp;S</label>
+            <label class="checkbox"><input type="checkbox">&nbsp;S</label>
+          </div>
+          <div class="field is-horizontal">
+            <!-- Monthly -->
+            <label class="label">Run</label>&nbsp;
+            <div class="control">
+              <label class="radio">
+                <input type="radio" name="month_day">&nbsp;Day of the Month
+              </label>
+              <label class="radio">
+                <input type="radio" name="month_day">&nbsp;Day of the week
+              </label>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <!-- Yearly -->
+            <label class="label">Day of the year</label>&nbsp;
+            <div class="control">
+              <input type="text" class="input">
+            </div>
           </div>
         </section>
         <footer class="modal-card-foot">
