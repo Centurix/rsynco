@@ -7,11 +7,12 @@ from rsynco import Config
 import logging
 import os
 import cherrypy
+from .scheduler import Scheduler
+
 
 """
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
-# TODO: Add job scheduler
 # TODO: Validate job paths
 # TODO: Add path explorer to job creation
 # TODO: Create self-documenting API endpoints for blueprint
@@ -29,6 +30,7 @@ class RsyncoDaemon(Daemon):
     def __init__(self, pidfile):
         super().__init__(pidfile)
         self.root = os.path.join(os.path.dirname(__file__), "..", "web", "dist")
+        self._scheduler = Scheduler()
 
     def run(self):
         logging.debug('DAEMON SPAWNED')
@@ -67,3 +69,4 @@ class RsyncoDaemon(Daemon):
 
     def start_scheduler(self):
         logging.info('Spawning the scheduler')
+        self._scheduler.start()

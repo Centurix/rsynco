@@ -1,7 +1,7 @@
 <template>
   <section class="section">
     <div>
-      <h1 class="title">Current Activity</h1>
+      <h1 class="title"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;Current Activity</h1>
       <table class="table is-striped is-fullwidth">
         <thead>
           <tr>

@@ -1,7 +1,7 @@
 <template>
   <section class="section">
     <div>
-      <h1 class="title">Jobs</h1>
+      <h1 class="title"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Jobs</h1>
       <table class="table is-striped is-fullwidth">
         <thead>
           <tr>
@@ -36,7 +36,7 @@
         <tfoot>
           <tr>
             <td colspan="7" class="has-text-right">
-              <button class="button is-primary is-small" v-on:click="newJob()"">Add a New Job</button>
+              <button class="button is-primary is-small" v-on:click="newJob()""><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add a New Job</button>
             </td>
           </tr>
         </tfoot>

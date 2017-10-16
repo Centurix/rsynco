@@ -12,10 +12,10 @@
     </div>
     <div class="navbar-menu" ref="burgerMenu" v-bind:class="{ 'is-active': isActive }">
       <div class="navbar-start">
-        <router-link :to="{name: 'Activity'}" class="navbar-item">Activity</router-link>
-        <router-link :to="{name: 'Hosts'}" class="navbar-item">Hosts</router-link>
-        <router-link :to="{name: 'Jobs'}" class="navbar-item">Jobs</router-link>
-        <router-link :to="{name: 'About'}" class="navbar-item">About</router-link>
+        <router-link :to="{name: 'Activity'}" class="navbar-item"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;Activity</router-link>
+        <router-link :to="{name: 'Hosts'}" class="navbar-item"><i class="fa fa-server" aria-hidden="true"></i>&nbsp;Hosts</router-link>
+        <router-link :to="{name: 'Jobs'}" class="navbar-item"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Jobs</router-link>
+        <router-link :to="{name: 'About'}" class="navbar-item"><i class="fa fa-info" aria-hidden="true"></i>&nbsp;About</router-link>
       </div>
     </div>
   </nav>

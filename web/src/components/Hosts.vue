@@ -1,7 +1,7 @@
 <template>
   <section class="section">
     <div>
-      <h1 class="title">Hosts</h1>
+      <h1 class="title"><i class="fa fa-server" aria-hidden="true"></i>&nbsp;Hosts</h1>
       <p class="has-text-right">
         <label class="checkbox">
           <input type="checkbox" v-model="showSystemHosts">
@@ -40,7 +40,7 @@
         <tfoot>
           <tr>
             <td colspan="7" class="has-text-right">
-              <button class="button is-primary is-small" v-on:click="newHost()"">Add a New Host</button>
+              <button class="button is-primary is-small" v-on:click="newHost()""><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add a New Host</button>
             </td>
           </tr>
         </tfoot>
