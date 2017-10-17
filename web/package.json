@@ -17,6 +17,7 @@
     "axios": "^0.16.2",
     "bulma": "^0.5.3",
     "bulma-badge": "0.0.3",
+    "cool-checkboxes-for-bulma.io": "^1.1.0",
     "font-awesome": "^4.7.0",
     "moment": "^2.18.1",
     "vue": "^2.4.2",
