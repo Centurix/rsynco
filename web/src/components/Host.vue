@@ -4,7 +4,8 @@
       <div class="modal-background" v-on:click="hide"></div>
       <div class="modal-card">
         <header class="modal-card-head">
-          <p class="modal-card-title">Edit Host Detail</p>
+          <p v-show="editing" class="modal-card-title">Edit Host Detail</p>
+          <p v-show="!editing" class="modal-card-title">New Host Detail</p>
           <button class="delete" aria-label="close" v-on:click="hide"></button>
         </header>
         <section class="modal-card-body">
