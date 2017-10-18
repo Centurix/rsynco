@@ -112,37 +112,37 @@
                   <div class="field">
                     <div class="control">
                       <div class="select is-fullwidth">
-                        <select v-model="schedule">
+                        <select v-model="job.repeat">
                           <option value="">Not scheduled</option>
                           <option>Second</option>
-                          <option>Minute</option>
-                          <option>Hour</option>
-                          <option>Day</option>
-                          <option>Week</option>
-                          <option>Month</option>
-                          <option>Year</option>
+                          <option value="minutes">Minute</option>
+                          <option value="hours">Hour</option>
+<!--                          <option value="days">Day</option>
+                          <option value="weeks">Week</option>
+                          <option value="months">Month</option>
+                          <option value="years">Year</option>-->
                         </select>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="field is-horizontal" v-show="schedule != ''">
+              <div class="field is-horizontal" v-show="job.repeat != ''">
                 <div class="field-label is-normal">
                   <label class="label">Every</label>
                 </div>
                 <div class="field-body">
                   <div class="field has-addons">
                     <div class="control">
-                      <input type="number" class="input" v-model="repeat">
+                      <input type="number" class="input" v-model.number="job.repeat_every">
                     </div>
                     <div class="control">
-                      <span class="button is-primary">{{ schedule }}(s)</span>
+                      <span class="button is-primary">{{ job.repeat }}</span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="field is-horizontal" v-show="schedule == 'Day'">
+              <div class="field is-horizontal" v-show="job.repeat == 'days'">
                 <!-- Daily -->
                 <div class="field-label is-normal">
                   <label class="label">Starts</label>
@@ -155,7 +155,7 @@
                   </div>
                 </div>
               </div>
-              <div class="field is-horizontal" v-show="schedule == 'Week'">
+              <div class="field is-horizontal" v-show="job.repeat == 'weeks'">
                 <!-- Weekly -->
                 <div class="field-label is-normal">
                   <label class="label">Every</label>
@@ -221,7 +221,7 @@
                   </ul>
                 </div>
               </div>
-              <div class="field is-horizontal" v-show="schedule == 'Month'">
+              <div class="field is-horizontal" v-show="job.repeat == 'months'">
                 <!-- Monthly -->
                 <div class="field-label is-normal">
                   <label class="label">Run</label>
@@ -239,7 +239,7 @@
                   </div>
                 </div>
               </div>
-              <div class="field is-horizontal" v-show="schedule == 'Year'">
+              <div class="field is-horizontal" v-show="job.repeat == 'years'">
                 <!-- Yearly -->
                 <div class="field-label is-normal">
                   <label class="label">Day of the year</label>&nbsp;
@@ -278,8 +278,6 @@ export default {
       shown: false,
       editing: false,
       job: this.emptyJob(),
-      schedule: '',
-      repeat: 1,
       hosts: []
     }
   },
@@ -306,7 +304,9 @@ export default {
         from_host: '',
         from_path: '',
         to_host: '',
-        to_path: ''
+        to_path: '',
+        repeat: '',
+        repeat_every: 1
       }
     },
     newJob: function () {

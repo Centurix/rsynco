@@ -6,7 +6,9 @@ export default {
         from_host: job.from_host,
         from_path: job.from_path,
         to_host: job.to_host,
-        to_path: job.to_path
+        to_path: job.to_path,
+        repeat: job.repeat,
+        repeat_every: job.repeat_every
       }
     },
     newJobTransformer: function (job) {
