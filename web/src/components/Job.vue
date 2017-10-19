@@ -34,13 +34,18 @@
                 </div>
                 <div class="field-body">
                   <div class="field">
-                    <div class="control has-icons-right">
-                      <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('from_host')}" >
-                        <select v-model="job.from_host">
-                          <option disabled value="">Select a host</option>
-                          <option value="localhost">localhost</option>
-                          <option v-for="host in hosts">{{ host.attributes.host }}</option>
-                        </select>
+                    <div class="field has-addons">
+                      <div class="control is-expanded">
+                        <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('from_host')}" >
+                          <select v-model="job.from_host">
+                            <option disabled value="">Select a host</option>
+                            <option value="localhost">localhost</option>
+                            <option v-for="host in hosts">{{ host.attributes.host }}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="control">
+                        <button class="button is-primary" v-on:click="newHost">New</button>
                       </div>
                     </div>
                     <p v-show="!isValid('from_host')" class="help">A host for this job is required</p>
@@ -71,13 +76,18 @@
                 </div>
                 <div class="field-body">
                   <div class="field">
-                    <div class="control has-icons-right">
-                      <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('to_host')}" >
-                        <select v-model="job.to_host">
-                          <option disabled value="">Select a host</option>
-                          <option value="localhost">localhost</option>
-                          <option v-for="host in hosts">{{ host.attributes.host }}</option>
-                        </select>
+                    <div class="field has-addons">
+                      <div class="control is-expanded">
+                        <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('to_host')}" >
+                          <select v-model="job.to_host">
+                            <option disabled value="">Select a host</option>
+                            <option value="localhost">localhost</option>
+                            <option v-for="host in hosts">{{ host.attributes.host }}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="control">
+                        <button class="button is-primary" v-on:click="newHost">New</button>
                       </div>
                     </div>
                     <p v-show="!isValid('to_host')" class="help">A host for this job is required</p>
@@ -117,10 +127,6 @@
                           <option value="seconds">Second</option>
                           <option value="minutes">Minute</option>
                           <option value="hours">Hour</option>
-<!--                          <option value="days">Day</option>
-                          <option value="weeks">Week</option>
-                          <option value="months">Month</option>
-                          <option value="years">Year</option>-->
                         </select>
                       </div>
                     </div>
@@ -155,66 +161,18 @@
                   </div>
                 </div>
               </div>
-              <div class="field is-horizontal" v-show="job.repeat == 'weeks'">
+              <div class="field is-horizontal" v-show="job.repeat != 'weeks'">
                 <!-- Weekly -->
                 <div class="field-label is-normal">
                   <label class="label">Every</label>
                 </div>
                 <div class="field-body">
                   <ul>
-                    <li class="field">
+                    <li class="field" v-for="weekday in 7">
                       <div class="control">
                         <div class="b-checkbox is-primary">
-                          <input type="checkbox" class="styled" id="monday">
-                          <label for="monday">Monday</label>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="field">
-                      <div class="control">
-                        <div class="b-checkbox is-primary">
-                          <input type="checkbox" class="styled" id="tuesday">
-                          <label for="tuesday">Tuesday</label>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="field">
-                      <div class="control">
-                        <div class="b-checkbox is-primary">
-                          <input type="checkbox" class="styled" id="wednesday">
-                          <label for="wednesday">Wednesday</label>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="field">
-                      <div class="control">
-                        <div class="b-checkbox is-primary">
-                          <input type="checkbox" class="styled" id="thursday">
-                          <label for="thursday">Thursday</label>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="field">
-                      <div class="control">
-                        <div class="b-checkbox is-primary">
-                          <input type="checkbox" class="styled" id="friday">
-                          <label for="friday">Friday</label>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="field">
-                      <div class="control">
-                        <div class="b-checkbox is-primary">
-                          <input type="checkbox" class="styled" id="saturday">
-                          <label for="saturday">Saturday</label>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="field">
-                      <div class="control">
-                        <div class="b-checkbox is-primary">
-                          <input type="checkbox" class="styled" id="sunday">
-                          <label for="sunday">Sunday</label>
+                          <input type="checkbox" class="styled" v-bind:id="$moment.weekdays(weekday).toLowerCase()">
+                          <label v-bind:for="$moment.weekdays(weekday).toLowerCase()">{{ $moment.weekdays(weekday) }}</label>
                         </div>
                       </div>
                     </li>
@@ -262,11 +220,13 @@
         </footer>
       </div>
     </div>
+    <host ref="host"></host>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import Host from './Host'
 import EventBus from '../eventbus'
 import Validation from '../mixins/validation'
 import JobTransformers from '../mixins/transformers/job'
@@ -286,9 +246,18 @@ export default {
     JobTransformers
   ],
   mounted: function () {
+    EventBus.$on('HOSTS_CHANGED', this.loadHosts)
     this.loadHosts()
   },
+  components: {
+    Host
+  },
   methods: {
+    newHost: function () {
+      // Show the new host modal
+      // Update the from and to host selects if a host was added
+      this.$refs.host.newHost()
+    },
     loadHosts: function () {
       axios.get(process.env.API_SERVER + '/hosts')
         .then((response) => {
