@@ -28,7 +28,7 @@ class Scheduler(threading.Thread):
 
     def run_job(self, job_name):
         logging.info('Running job: {}...'.format(job_name))
-
+        self._JobRepository.reload()
         job = self._JobRepository.get_job(job_name)
         logging.debug('Scheduler: Starting rsync from host {} to host {}'.format(job['from_host'], job['to_host']))
 
@@ -64,6 +64,7 @@ class Scheduler(threading.Thread):
 
     def add_schedules(self):
         logging.info('Loading schedules...')
+        self._JobRepository.reload()
         jobs = self._JobRepository.get_jobs()
         logging.debug('Loaded {} jobs'.format(len(jobs)))
         for job in jobs:
@@ -71,6 +72,7 @@ class Scheduler(threading.Thread):
 
     def add_schedule(self, job_name):
         logging.debug('Adding job schedule {}'.format(job_name))
+        self._JobRepository.reload()
         job = self._JobRepository.get_job(job_name)
         if job['repeat'] == 'seconds':
             self.add_schedule_seconds(int(job['repeat_every']), job['name'])

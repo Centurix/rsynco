@@ -24,3 +24,6 @@ class Config:
 
     def update(self):
         self.data.write()
+
+    def refresh(self):
+        self.data.reload()

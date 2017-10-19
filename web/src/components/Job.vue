@@ -114,7 +114,7 @@
                       <div class="select is-fullwidth">
                         <select v-model="job.repeat">
                           <option value="">Not scheduled</option>
-                          <option>Second</option>
+                          <option value="seconds">Second</option>
                           <option value="minutes">Minute</option>
                           <option value="hours">Hour</option>
 <!--                          <option value="days">Day</option>

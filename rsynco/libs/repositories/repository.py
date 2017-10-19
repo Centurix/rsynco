@@ -7,3 +7,6 @@ class Repository:
     """
     def __init__(self):
         self.config = Config()
+
+    def reload(self):
+        self.config.data.reload()
