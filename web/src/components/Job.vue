@@ -106,11 +106,16 @@
                 </div>
                 <div class="field-body">
                   <div class="field">
-                    <div class="control has-icons-right">
-                      <input v-bind:class="{'input': true, 'is-danger': isValid('to_path')}" type="text" placeholder="To Path" v-model="job.to_path">
-                      <span v-show="isValid('to_path')" class="icon is-small is-right">
-                        <i class="fa fa-warning"></i>
-                      </span>
+                    <div class="field has-addons">
+                      <div class="control has-icons-right is-expanded">
+                        <input v-bind:class="{'input': true, 'is-danger': isValid('to_path')}" type="text" placeholder="To Path" v-model="job.to_path">
+                        <span v-show="isValid('to_path')" class="icon is-small is-right">
+                          <i class="fa fa-warning"></i>
+                        </span>
+                      </div>
+                      <div class="control">
+                        <button class="button is-primary" v-on:click="browsePath('to_path')"><i class="fa fa-folder-open" aria-hidden="true"></i></button>
+                      </div>
                     </div>
                     <p v-show="!isValid('to_path')" class="help">A path for this job is required</p>
                     <p v-show="isValid('to_path')" class="help is-danger">Invalid path</p>

@@ -8,30 +8,37 @@
           <button class="delete" aria-label="close" v-on:click="hide"></button>
         </header>
         <section class="modal-card-body">
-          <nav class="breadcrumb" aria-label="breadcrumbs">
+          <div class="columns" v-show="loading">
+            <div class="column has-text-centered">
+              <pulse-loader></pulse-loader>
+            </div>
+          </div>
+          <div v-show="!loading">
+            <nav class="breadcrumb" aria-label="breadcrumbs">
+              <ul>
+                <li v-for="(part, index) in pathParts">
+                  <a v-on:click="navigateToAbsolute(index)">{{ part }}</a>
+                </li>
+              </ul>
+            </nav>
             <ul>
-              <li v-for="(part, index) in pathParts">
-                <a v-on:click="navigateToAbsolute(index)">{{ part }}</a>
+              <li v-show="pathParts.length > 1"><a v-on:click="navigateToParent">..</a></li>
+              <li v-for="item in contents">
+                <a v-show="item.attributes.type=='dir' && canShow(item.attributes.name)" v-on:click="navigateTo(item.attributes.name)">
+                  <i class="fa fa-folder" aria-hidden="true"></i>
+                  {{ item.attributes.name }}
+                </a>
+                <span v-show="item.attributes.type=='file' && canShow(item.attributes.name)">
+                  <i class="fa fa-file" aria-hidden="true"></i>
+                  {{ item.attributes.name }}
+                </span>
+                <span v-show="item.attributes.type=='link' && canShow(item.attributes.name)">
+                  <i class="fa fa-link" aria-hidden="true"></i>
+                  {{ item.attributes.name }}
+                </span>
               </li>
             </ul>
-          </nav>
-          <ul>
-            <li><a v-on:click="navigateToParent">..</a></li>
-            <li v-for="item in contents">
-              <a v-show="item.attributes.type=='dir' && canShow(item.attributes.name)" v-on:click="navigateTo(item.attributes.name)">
-                <i class="fa fa-folder" aria-hidden="true"></i>
-                {{ item.attributes.name }}
-              </a>
-              <span v-show="item.attributes.type=='file' && canShow(item.attributes.name)">
-                <i class="fa fa-file" aria-hidden="true"></i>
-                {{ item.attributes.name }}
-              </span>
-              <span v-show="item.attributes.type=='link' && canShow(item.attributes.name)">
-                <i class="fa fa-link" aria-hidden="true"></i>
-                {{ item.attributes.name }}
-              </span>
-            </li>
-          </ul>
+          </div>
         </section>
         <footer class="modal-card-foot">
           <button class="button is-primary" v-on:click="select">Select</button>
@@ -51,11 +58,13 @@
 <script>
 import axios from 'axios'
 import EventBus from '../eventbus'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 export default {
   name: 'browser',
   data () {
     return {
+      loading: false,
       showHidden: false,
       tag: '',
       shown: false,
@@ -65,6 +74,9 @@ export default {
       pathParts: [],
       contents: []
     }
+  },
+  components: {
+    PulseLoader
   },
   methods: {
     canShow: function (name) {
@@ -83,10 +95,14 @@ export default {
       this.getContents()
     },
     parsePath: function (path) {
-      return path.split('/')
+      let paths = path.split('/')
+      paths[0] = 'root'
+      return paths
     },
     joinPath: function (pathParts) {
-      return pathParts.join('/')
+      let parts = pathParts.slice()
+      parts.shift()
+      return '/' + parts.join('/')
     },
     browse: function (tag, host, initialPath) {
       this.tag = tag
@@ -97,12 +113,15 @@ export default {
       this.show()
     },
     getContents: function () {
+      this.loading = true
       axios.get(process.env.API_SERVER + '/paths/' + encodeURIComponent(this.host) + '/' + encodeURIComponent(this.joinPath(this.pathParts)))
         .then((response) => {
+          this.loading = false
           this.contents = response.data.data
           console.log(response)
         })
         .catch((error) => {
+          this.loading = false
           console.log(error)
         })
     },

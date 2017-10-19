@@ -39,7 +39,8 @@ class Rsync:
             'rsync',
             '--info=progress2',
             '--partial',
-            source,
+            '--recursive',
+            source + '/',
             dest
         ])
         with open('/tmp/rsync_%s.log' % uuid.uuid4(), 'w') as logfile:
@@ -48,7 +49,8 @@ class Rsync:
                     'rsync',
                     '--info=progress2',
                     '--partial',
-                    source,
+                    '--recursive',
+                    source + '/',
                     dest
                 ],
                 stdout=logfile
