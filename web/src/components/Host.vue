@@ -77,6 +77,7 @@ export default {
   name: 'host',
   data () {
     return {
+      tag: '',
       shown: false,
       editing: false,
       host: this.emptyHost()
@@ -96,12 +97,14 @@ export default {
         password: ''
       }
     },
-    newHost: function () {
+    newHost: function (tag) {
+      this.tag = tag
       this.editing = false
       this.host = this.emptyHost()
       this.show()
     },
-    editHost: function (name) {
+    editHost: function (name, tag) {
+      this.tag = tag
       this.editing = true
       axios.get(process.env.API_SERVER + '/hosts/' + name)
         .then((response) => {
@@ -116,7 +119,7 @@ export default {
       axios.post(process.env.API_SERVER + '/hosts', this.newHostTransformer(this.host))
         .then((response) => {
           this.hide()
-          EventBus.$emit('HOSTS_CHANGED')
+          EventBus.$emit('HOSTS_CHANGED', this.tag, this.host.host)
         })
         .catch((error) => {
           this.processValidationErrors(error)
@@ -126,7 +129,7 @@ export default {
       axios.put(process.env.API_SERVER + '/hosts/' + this.host.host, this.editHostTransformer(this.host))
         .then((response) => {
           this.hide()
-          EventBus.$emit('HOSTS_CHANGED')
+          EventBus.$emit('HOSTS_CHANGED', this.tag, this.host.host)
         })
         .catch((error) => {
           this.processValidationErrors(error)

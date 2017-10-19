@@ -2,6 +2,7 @@ from rsynco.libs.daemon import Daemon
 from rsynco.api.activity import Activity
 from rsynco.api.hosts import Hosts
 from rsynco.api.jobs import Jobs
+from rsynco.api.paths import Paths
 from rsynco.api.root import Root
 from rsynco import Config
 import logging
@@ -23,7 +24,6 @@ To pause rsync, send the TSTP signal. Start rsync with --partial.
 # TODO: Add a build process to pipelines and dump a release
 # TODO: Use exceptions throughout
 # TODO: Figure out how to pass the current server address to the SPA
-# TODO: Force reload of ini settings for Jobs and Hosts in case another process changes them
 
 
 class RsyncoDaemon(Daemon):
@@ -55,6 +55,7 @@ class RsyncoDaemon(Daemon):
         cherrypy.tree.mount(Activity(), '/activity', config=rest_config)
         cherrypy.tree.mount(Hosts(), '/hosts', config=rest_config)
         cherrypy.tree.mount(Jobs(), '/jobs', config=rest_config)
+        cherrypy.tree.mount(Paths(), '/paths', config=rest_config)
         cherrypy.tree.mount(Root(), '/', config={
             '/': {
                 'tools.staticdir.on': True,

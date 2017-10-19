@@ -45,7 +45,7 @@
                         </div>
                       </div>
                       <div class="control">
-                        <button class="button is-primary" v-on:click="newHost">New</button>
+                        <button class="button is-primary" v-on:click="newHost('from')">New</button>
                       </div>
                     </div>
                     <p v-show="!isValid('from_host')" class="help">A host for this job is required</p>
@@ -59,11 +59,16 @@
                 </div>
                 <div class="field-body">
                   <div class="field">
-                    <div class="control has-icons-right">
-                      <input v-bind:class="{'input': true, 'is-danger': isValid('from_path')}" type="text" placeholder="From Path" v-model="job.from_path">
-                      <span v-show="isValid('from_path')" class="icon is-small is-right">
-                        <i class="fa fa-warning"></i>
-                      </span>
+                    <div class="field has-addons">
+                      <div class="control has-icons-right is-expanded">
+                        <input v-bind:class="{'input': true, 'is-danger': isValid('from_path')}" type="text" placeholder="From Path" v-model="job.from_path">
+                        <span v-show="isValid('from_path')" class="icon is-small is-right">
+                          <i class="fa fa-warning"></i>
+                        </span>
+                      </div>
+                      <div class="control">
+                        <button class="button is-primary" v-on:click="browsePath('from_path')"><i class="fa fa-folder-open" aria-hidden="true"></i></button>
+                      </div>
                     </div>
                     <p v-show="!isValid('from_path')" class="help">A path for this job is required</p>
                     <p v-show="isValid('from_path')" class="help is-danger">Invalid path</p>
@@ -87,7 +92,7 @@
                         </div>
                       </div>
                       <div class="control">
-                        <button class="button is-primary" v-on:click="newHost">New</button>
+                        <button class="button is-primary" v-on:click="newHost('to')">New</button>
                       </div>
                     </div>
                     <p v-show="!isValid('to_host')" class="help">A host for this job is required</p>
@@ -221,12 +226,14 @@
       </div>
     </div>
     <host ref="host"></host>
+    <browser ref="browser"></browser>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import Host from './Host'
+import Browser from './Browser'
 import EventBus from '../eventbus'
 import Validation from '../mixins/validation'
 import JobTransformers from '../mixins/transformers/job'
@@ -247,21 +254,38 @@ export default {
   ],
   mounted: function () {
     EventBus.$on('HOSTS_CHANGED', this.loadHosts)
+    EventBus.$on('PATH_SELECTED', this.pathSelected)
     this.loadHosts()
   },
   components: {
-    Host
+    Host,
+    Browser
   },
   methods: {
-    newHost: function () {
+    pathSelected: function (tag, path) {
+      if (tag === 'from_path') {
+        this.job.from_path = path
+      } else if (tag === 'to_path') {
+        this.job.to_path = path
+      }
+    },
+    browsePath: function (tag) {
+      this.$refs.browser.browse(tag, this.job.from_host, this.job.from_path)
+    },
+    newHost: function (tag) {
       // Show the new host modal
       // Update the from and to host selects if a host was added
-      this.$refs.host.newHost()
+      this.$refs.host.newHost(tag)
     },
-    loadHosts: function () {
+    loadHosts: function (tag, host) {
       axios.get(process.env.API_SERVER + '/hosts')
         .then((response) => {
           this.hosts = response.data.data
+          if (tag === 'from') {
+            this.job.from_host = host
+          } else if (tag === 'to') {
+            this.job.to_host = host
+          }
         })
         .catch((error) => {
           console.log(error)
