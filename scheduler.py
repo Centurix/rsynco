@@ -20,6 +20,20 @@ Year
 
 https://schedule.readthedocs.io/en/stable/
 
+Threading the scheduler while running cherrypy in the main thread.
+
+import cherrypy
+import thread
+import time
+
+def daemon():
+   while 1:
+       do_periodic_stuff()
+       time.sleep(seconds)
+
+cherrypy.root = my_cherrypy_root()
+thread.start_new_thread(daemon)
+cherrypy.server.start()
 """
 
 
@@ -38,19 +52,3 @@ while True:
     time.sleep(1)
 
 
-"""
-Threading the scheduler while running cherrypy in the main thread.
-
-import cherrypy
-import thread
-import time
-
-def daemon():
-   while 1:
-       do_periodic_stuff()
-       time.sleep(seconds)
-
-cherrypy.root = my_cherrypy_root()
-thread.start_new_thread(daemon)
-cherrypy.server.start()
-"""

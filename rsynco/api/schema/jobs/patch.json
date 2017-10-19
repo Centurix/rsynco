@@ -24,7 +24,9 @@
               "from_path": {"type": "string", "minLength": 1},
               "to_host": {"type": "string", "minLength": 1},
               "to_path": {"type": "string", "minLength": 1},
-              "status": {"type": "string", "minLength": 1}
+              "status": {"type": "string", "minLength": 1},
+              "repeat": {"type": "string"},
+              "repeat_every": {"type": "integer"}
             }
           }
         }

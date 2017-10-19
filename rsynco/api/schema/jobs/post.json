@@ -15,14 +15,16 @@
           "type": {"type": "string"},
           "attributes": {
             "type": "object",
-            "required": ["name", "from_host", "from_path", "to_host", "to_path"],
+            "required": ["name", "from_host", "from_path", "to_host", "to_path", "repeat", "repeat_every"],
             "additionalProperties": false,
             "properties": {
               "name": {"type": "string", "minLength": 1},
               "from_host": {"type": "string", "minLength": 1},
               "from_path": {"type": "string", "minLength": 1},
               "to_host": {"type": "string", "minLength": 1},
-              "to_path": {"type": "string", "minLength": 1}
+              "to_path": {"type": "string", "minLength": 1},
+              "repeat": {"type": "string"},
+              "repeat_every": {"type": "integer"}
             }
           }
         }

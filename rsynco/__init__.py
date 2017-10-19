@@ -1,5 +1,8 @@
 from configobj import ConfigObj
 from validate import Validator
+import queue
+
+job_queue = queue.Queue()
 
 
 class Config:

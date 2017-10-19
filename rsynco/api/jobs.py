@@ -6,6 +6,7 @@ from rsynco.libs.rsync import Rsync
 from rsynco.libs.validation import validation
 from rsynco.api.transformers.job_transformer import JobTransformer
 import logging
+from rsynco import job_queue
 
 
 class Jobs(ApiHandler):
@@ -31,8 +32,11 @@ class Jobs(ApiHandler):
             data['from_host'],
             data['from_path'],
             data['to_host'],
-            data['to_path']
+            data['to_path'],
+            data['repeat'],
+            data['repeat_every']
         )
+        # TODO: Load the new job into the scheduler
         cherrypy.response.status = 201
         return JobTransformer.jobs([data])
 
@@ -45,13 +49,19 @@ class Jobs(ApiHandler):
             data['from_host'],
             data['from_path'],
             data['to_host'],
-            data['to_path']
+            data['to_path'],
+            data['repeat'],
+            data['repeat_every']
         )
+        # TODO: Update the job in the scheduler
+        logging.debug('API: Sending data to the QUEUE')
+        job_queue.put(data['name'])
         return JobTransformer.jobs([data])
 
     def DELETE(self, name):
         logging.debug('API: Deleting job {}'.format(name))
         self._JobRepository.delete_job(name)
+        # TODO: Delete the job from the scheduler
         return JobTransformer.empty_job()
 
     @validation
@@ -68,4 +78,5 @@ class Jobs(ApiHandler):
                 self._HostRepository.get_host(job['to_host']),
                 job['to_path']
             )
+        # TODO: Update the job in the scheduler if this handles job scheduling changes in the future
         return JobTransformer.jobs([self._JobRepository.get_job(name)])
