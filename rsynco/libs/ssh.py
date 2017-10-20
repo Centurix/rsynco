@@ -39,3 +39,4 @@ class SshConfig:
 
             if host['host'] != '' and host['hostname'] != '':
                 self.hosts.append(host)
+

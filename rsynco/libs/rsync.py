@@ -35,12 +35,18 @@ class Rsync:
         if to_host['hostname'] == 'localhost':
             dest = to_path
 
+        if source[-1] != '/':
+            source = source + '/'
+
+        if dest[-1] != '/':
+            dest = dest + '/'
+
         logging.debug([
             'rsync',
             '--info=progress2',
             '--partial',
             '--recursive',
-            source + '/',
+            source,
             dest
         ])
         with open('/tmp/rsync_%s.log' % uuid.uuid4(), 'w') as logfile:

@@ -1,3 +1,6 @@
+import cherrypy
+
+
 class PathTransformer:
     @staticmethod
     def paths(contents):
@@ -15,4 +18,17 @@ class PathTransformer:
 
         return {
             'data': data_object
+        }
+
+    @staticmethod
+    def nearest_path(path):
+        # Return the 404 with the nearest path found
+        cherrypy.response.status = 404
+
+        return {
+            'errors': [{
+                "status": "404",
+                "title": "Path not found, here's the closest valid path",
+                "path": path
+            }]
         }

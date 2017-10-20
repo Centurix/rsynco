@@ -89,14 +89,17 @@ export default {
       return this.showHidden || (name.substr(0, 1) !== '.')
     },
     navigateTo: function (dir) {
+      this.initialPathValid = true
       this.pathParts.push(dir)
       this.getContents()
     },
     navigateToParent: function () {
+      this.initialPathValid = true
       this.pathParts.pop()
       this.getContents()
     },
     navigateToAbsolute: function (index) {
+      this.initialPathValid = true
       this.pathParts = this.pathParts.slice(0, index + 1)
       this.getContents()
     },
