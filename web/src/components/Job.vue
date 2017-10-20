@@ -275,7 +275,12 @@ export default {
       }
     },
     browsePath: function (tag) {
-      this.$refs.browser.browse(tag, this.job.from_host, this.job.from_path)
+      console.log(tag)
+      if (tag === 'from_path') {
+        this.$refs.browser.browse(tag, this.job.from_host, this.job.from_path)
+      } else {
+        this.$refs.browser.browse(tag, this.job.to_host, this.job.to_path)
+      }
     },
     newHost: function (tag) {
       // Show the new host modal

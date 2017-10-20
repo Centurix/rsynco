@@ -13,6 +13,11 @@
               <pulse-loader></pulse-loader>
             </div>
           </div>
+          <article v-show="!initialPathValid" class="message is-warning">
+            <div class="message-body">
+              The path {{ initialPath }} could not be found on the selected host, here's the closest path.
+            </div>
+          </article>
           <div v-show="!loading">
             <nav class="breadcrumb" aria-label="breadcrumbs">
               <ul>
@@ -28,11 +33,11 @@
                   <i class="fa fa-folder" aria-hidden="true"></i>
                   {{ item.attributes.name }}
                 </a>
-                <span v-show="item.attributes.type=='file' && canShow(item.attributes.name)">
+                <span v-show="item.attributes.type=='file' && canShow(item.attributes.name)" class="has-text-grey-light">
                   <i class="fa fa-file" aria-hidden="true"></i>
                   {{ item.attributes.name }}
                 </span>
-                <span v-show="item.attributes.type=='link' && canShow(item.attributes.name)">
+                <span v-show="item.attributes.type=='link' && canShow(item.attributes.name)" class="has-text-grey-light">
                   <i class="fa fa-link" aria-hidden="true"></i>
                   {{ item.attributes.name }}
                 </span>
@@ -70,6 +75,7 @@ export default {
       shown: false,
       host: '',
       initialPath: '',
+      initialPathValid: true,
       currentPath: '',
       pathParts: [],
       contents: []
@@ -108,6 +114,7 @@ export default {
       this.tag = tag
       this.host = host
       this.initialPath = initialPath
+      this.initialPathValid = true
       this.pathParts = this.parsePath(initialPath)
       this.getContents()
       this.show()
@@ -118,11 +125,14 @@ export default {
         .then((response) => {
           this.loading = false
           this.contents = response.data.data
-          console.log(response)
         })
         .catch((error) => {
           this.loading = false
-          console.log(error)
+          if (error.response.status === 404) {
+            this.initialPathValid = false
+            this.pathParts = this.parsePath(error.response.data.errors[0].path)
+            this.getContents()
+          }
         })
     },
     select: function () {
