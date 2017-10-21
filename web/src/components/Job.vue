@@ -9,6 +9,11 @@
           <button class="delete" aria-label="close" v-on:click="hide"></button>
         </header>
         <section class="modal-card-body">
+          <article v-show="invalidHostSelection" class="message is-warning">
+            <div class="message-body">
+              One of the hosts has to be localhost. Rsync cannot copy from one remote host to another.
+            </div>
+          </article>
           <div class="columns">
             <div class="column">
               <div class="field is-horizontal">
@@ -36,7 +41,7 @@
                   <div class="field">
                     <div class="field has-addons">
                       <div class="control is-expanded">
-                        <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('from_host')}" >
+                        <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('from_host')}" v-on:change="changeHost('from')">
                           <select v-model="job.from_host">
                             <option disabled value="">Select a host</option>
                             <option value="localhost">localhost</option>
@@ -84,7 +89,7 @@
                     <div class="field has-addons">
                       <div class="control is-expanded">
                         <div class="select" v-bind:class="{'select': true, 'is-fullwidth': true, 'is-danger': isValid('to_host')}" >
-                          <select v-model="job.to_host">
+                          <select v-model="job.to_host" v-on:change="changeHost('to')">
                             <option disabled value="">Select a host</option>
                             <option value="localhost">localhost</option>
                             <option v-for="host in hosts">{{ host.attributes.host }}</option>
@@ -224,8 +229,8 @@
           </div>
         </section>
         <footer class="modal-card-foot">
-          <button v-if="!editing" class="button is-primary" v-on:click="add">Add</button>
-          <button v-if="editing" class="button is-primary" v-on:click="update">Update</button>
+          <button v-if="!editing" class="button is-primary" v-on:click="add" :disabled="invalidHostSelection">Add</button>
+          <button v-if="editing" class="button is-primary" v-on:click="update" :disabled="invalidHostSelection">Update</button>
           <button class="button is-danger" v-on:click="hide">Cancel</button>
         </footer>
       </div>
@@ -247,6 +252,7 @@ export default {
   name: 'job',
   data () {
     return {
+      invalidHostSelection: false,
       shown: false,
       editing: false,
       job: this.emptyJob(),
@@ -267,6 +273,20 @@ export default {
     Browser
   },
   methods: {
+    changeHost: function (type) {
+      console.log(this.job.from_host)
+      console.log(this.job.to_host)
+      if (this.job.from_host === 'localhost' || this.job.to_host === 'localhost') {
+        this.invalidHostSelection = false
+        return
+      }
+      if (
+          (type === 'from' && this.job.from_host !== 'localhost') ||
+          (type === 'to' && this.job.to_host !== 'localhost')
+       ) {
+        this.invalidHostSelection = true
+      }
+    },
     pathSelected: function (tag, path) {
       if (tag === 'from_path') {
         this.job.from_path = path
