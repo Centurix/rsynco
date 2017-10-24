@@ -10,6 +10,13 @@ setup(
     long_description=open('README.md').read(),
     keywords="rsync cherrypy rest api",
     url="",
+    install_requires=[
+        "configobj",
+        "CherryPy",
+        "psutil",
+        "jsonschema",
+        "schedule"
+    ],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: System :: Archiving :: Backup",
