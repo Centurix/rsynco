@@ -5,6 +5,7 @@ import signal
 import datetime
 import uuid
 import logging
+import glob
 
 
 class Rsync:
@@ -82,8 +83,10 @@ class Rsync:
     def list_rsync_tasks(self):
         logging.debug('Acquiring a list of current rsync tasks...')
         tasks = list()
+        active_log_files = list()
         for proc in psutil.process_iter():
             if proc.name() == 'rsync' and len(proc.children()) == 0:
+                active_log_files.append(self.find_log_file(proc.open_files()))
                 tasks.append({
                     'pid': proc.pid,
                     'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
@@ -92,7 +95,18 @@ class Rsync:
                     'progress': self.get_progress(self.find_log_file(proc.open_files())),
                     'status': proc.status()
                 })
+
+        logging.debug('Active log files:')
+        logging.debug(active_log_files)
+
+        self.cull_dead_logs(active_log_files)
+
         return tasks
+
+    def cull_dead_logs(self, current_logs):
+        for file in glob.iglob('/tmp/rsync_*.log'):
+            if file not in current_logs:
+                os.remove(file)
 
     def pause(self, pid):
         logging.debug('Pausing rsync task {}...'.format(pid))
