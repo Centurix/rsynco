@@ -96,11 +96,15 @@ class Ssh:
         return contents
 
     def remote_exists(self, host, path):
-        p = psutil.Popen(['ssh', host, 'ls', '-Fa', path.as_posix()], stdout=PIPE, stderr=PIPE)
+        logging.debug("Escaping path")
+        escaped_path = '""{}""'.format(path.as_posix().replace(' ', '\\ '))
+        p = psutil.Popen(['ssh', host, 'ls', '-Fa', escaped_path], stdout=PIPE, stderr=PIPE)
         main_output, main_error = p.communicate()
 
         error = main_error.decode(encoding='UTF-8')
         error_matched = re.search('No such file or directory', error)
+
+        logging.debug(error)
 
         if error_matched is not None:
             logging.debug('Path not found')
@@ -110,7 +114,8 @@ class Ssh:
 
     def remote_iterdir(self, host, path):
         # Call out to the remote host
-        p = psutil.Popen(['ssh', host, 'ls', '-Fa', path.as_posix()], stdout=PIPE, stderr=PIPE)
+        escaped_path = '""{}""'.format(path.as_posix().replace(' ', '\\ '))
+        p = psutil.Popen(['ssh', host, 'ls', '-Fa', escaped_path], stdout=PIPE, stderr=PIPE)
         main_output, main_error = p.communicate()
 
         logging.debug(main_error.decode(encoding='UTF-8'))
