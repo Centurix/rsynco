@@ -23,7 +23,7 @@ class SshConfig:
         return dict({'host': '', 'hostname': '', 'port': 22, 'username': '', 'password': '', 'type': 'system'})
 
     def parse(self):
-        logging.debug('Parsing SSH config file {}'.format(str(self.file)))
+        logging.debug('Parsing SSH config file {}'.format(str(self.file.as_posix())))
         if not self.file.is_file():
             logging.debug('SSH config does not exist')
             return

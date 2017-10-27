@@ -36,8 +36,9 @@ class Jobs(ApiHandler):
             data['repeat'],
             data['repeat_every']
         )
-        # TODO: Load the new job into the scheduler
         cherrypy.response.status = 201
+        logging.debug('API: Sending data to the QUEUE')
+        job_queue.put(data['name'])
         return JobTransformer.jobs([data])
 
     @validation
@@ -53,7 +54,6 @@ class Jobs(ApiHandler):
             data['repeat'],
             data['repeat_every']
         )
-        # TODO: Update the job in the scheduler
         logging.debug('API: Sending data to the QUEUE')
         job_queue.put(data['name'])
         return JobTransformer.jobs([data])
@@ -78,5 +78,4 @@ class Jobs(ApiHandler):
                 self._HostRepository.get_host(job['to_host']),
                 job['to_path']
             )
-        # TODO: Update the job in the scheduler if this handles job scheduling changes in the future
         return JobTransformer.jobs([self._JobRepository.get_job(name)])

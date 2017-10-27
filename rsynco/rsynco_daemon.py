@@ -15,9 +15,7 @@ from .scheduler import Scheduler
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
 # TODO: Validate job paths
-# TODO: Add path explorer to job creation
 # TODO: Create self-documenting API endpoints for blueprint
-# TODO: Tests
 # TODO: Make sure this is init.d/systemd/whatever friendly
 # TODO: Include boilerplate for pip, pypi and other repositories
 # TODO: Some kind of basic authentication
