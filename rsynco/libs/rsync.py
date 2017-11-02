@@ -8,6 +8,10 @@ import logging
 import glob
 
 
+class NoHostException(Exception):
+    pass
+
+
 class Rsync:
     """
     This gives an overall percentage progress through the file transfer

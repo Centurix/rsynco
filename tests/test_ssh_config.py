@@ -23,7 +23,7 @@ class TestSSHConfig(unittest.TestCase):
 
         assert ssh.hosts == list()
 
-    def test_reading_ssh_config_returns_a_host(self):
+    def test_reading_ssh_config_returns_multiple_hosts(self):
         mock_path = Mock()
         mock_path.is_file = MagicMock(return_value=True)
 
@@ -31,6 +31,10 @@ class TestSSHConfig(unittest.TestCase):
         file_mock = MagicMock()
         file_mock.readlines = Mock(return_value=[
             "Host Homestead\n",
+            "\tHostName 127.0.0.1\n",
+            "\tUser vagrant\n",
+            "\tPort 2222\n",
+            "Host Homestead2\n",
             "\tHostName 127.0.0.1\n",
             "\tUser vagrant\n",
             "\tPort 2222\n"
@@ -42,6 +46,13 @@ class TestSSHConfig(unittest.TestCase):
 
         assert ssh.hosts == list([{
             'host': 'Homestead',
+            'hostname': '127.0.0.1',
+            'port': 2222,
+            'username': 'vagrant',
+            'password': '',
+            'type': 'system'
+        }, {
+            'host': 'Homestead2',
             'hostname': '127.0.0.1',
             'port': 2222,
             'username': 'vagrant',

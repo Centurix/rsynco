@@ -1,4 +1,5 @@
-from distutils.core import setup
+from distutils.core import setup  # pragma: no cover
+
 
 setup(
     name='rsynco',
@@ -25,4 +26,4 @@ setup(
         "Intended Audience :: Information Technology",
         "Framework :: CherryPy",
     ]
-)
+)  # pragma: no cover
