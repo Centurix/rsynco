@@ -4,7 +4,7 @@ import time
 import schedule
 from rsynco.libs.repositories.job_repository import JobRepository
 from rsynco.libs.repositories.host_repository import HostRepository
-from rsynco.libs.rsync import Rsync
+from rsynco.libs.rsync import Rsync, NoHostException
 from rsynco import job_queue
 import queue
 
@@ -32,12 +32,15 @@ class Scheduler(threading.Thread):
         job = self._JobRepository.get_job(job_name)
         logging.debug('Scheduler: Starting rsync from host {} to host {}'.format(job['from_host'], job['to_host']))
 
-        self._Rsync.process(
-            self._HostRepository.get_host(job['from_host']),
-            job['from_path'],
-            self._HostRepository.get_host(job['to_host']),
-            job['to_path']
-        )
+        try:
+            self._Rsync.process(
+                self._HostRepository.get_host(job['from_host']),
+                job['from_path'],
+                self._HostRepository.get_host(job['to_host']),
+                job['to_path']
+            )
+        except NoHostException as no_host:
+            logging.error(no_host)
 
     def run(self):
         logging.info('Starting scheduler thread...')

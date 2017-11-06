@@ -2,7 +2,7 @@ import cherrypy
 from .apihandler import ApiHandler
 from rsynco.libs.repositories.job_repository import JobRepository
 from rsynco.libs.repositories.host_repository import HostRepository
-from rsynco.libs.rsync import Rsync
+from rsynco.libs.rsync import Rsync, NoHostException
 from rsynco.libs.validation import validation
 from rsynco.api.transformers.job_transformer import JobTransformer
 import logging
@@ -72,10 +72,14 @@ class Jobs(ApiHandler):
             job = self._JobRepository.get_job(name)
             logging.debug('API: Starting rsync from host {} to host {}'.format(job['from_host'], job['to_host']))
 
-            self._Rsync.process(
-                self._HostRepository.get_host(job['from_host']),
-                job['from_path'],
-                self._HostRepository.get_host(job['to_host']),
-                job['to_path']
-            )
+            try:
+                self._Rsync.process(
+                    self._HostRepository.get_host(job['from_host']),
+                    job['from_path'],
+                    self._HostRepository.get_host(job['to_host']),
+                    job['to_path']
+                )
+            except NoHostException as no_host:
+                logging.error(no_host)
+
         return JobTransformer.jobs([self._JobRepository.get_job(name)])

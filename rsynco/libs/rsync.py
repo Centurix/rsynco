@@ -24,8 +24,7 @@ class Rsync:
 
     def process(self, from_host, from_path, to_host, to_path):
         if from_host is None or to_host is None:
-            logging.error('Invalid host configuration, rsync not started')
-            return
+            raise NoHostException('Invalid host configuration, rsync not started')
 
         if from_host['type'] == 'system':
             source = '{}:{}'.format(from_host['host'], from_path)
