@@ -88,8 +88,6 @@ class Rsync:
         tasks = list()
         active_log_files = list()
         for proc in psutil.process_iter():
-            for param in proc.cmdline():
-                logging.info('Param: {}'.format(param))
             if proc.name() == 'rsync' and len(proc.children()) == 0 and "--server" not in proc.cmdline():
                 active_log_files.append(self.find_log_file(proc.open_files()))
                 tasks.append({
