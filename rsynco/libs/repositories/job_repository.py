@@ -22,6 +22,10 @@ class JobRepository(Repository):
     def get_jobs(self):
         logging.debug('REPOSITORY: Getting all jobs')
         jobs = list()
+
+        if 'jobs' not in self.config.data.keys():
+            return jobs
+
         for job in self.config.data['jobs']:
             jobs.append({
                 'name': job,
