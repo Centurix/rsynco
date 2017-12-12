@@ -46,6 +46,10 @@ class HostRepository(Repository):
     def get_hosts(self):
         logging.debug('REPOSITORY: Getting rsynco hosts')
         hosts = list()
+
+        if 'hosts' not in self.config.data.keys():
+            return hosts
+
         for host in self.config.data['hosts']:
             hosts.append({
                 'host': host,
