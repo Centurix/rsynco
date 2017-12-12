@@ -47,8 +47,7 @@ class HostRepository(Repository):
         logging.debug('REPOSITORY: Getting rsynco hosts')
         hosts = list()
 
-        if 'hosts' not in self.config.data.keys():
-            return hosts
+        self.check_section('hosts')
 
         for host in self.config.data['hosts']:
             hosts.append({
@@ -84,6 +83,9 @@ class HostRepository(Repository):
 
     def add_host(self, host, hostname, port, username, password):
         logging.debug('REPOSITORY: Adding host {}'.format(host))
+
+        self.check_section('hosts')
+
         self.config.data['hosts'][host] = {
             'host': host,
             'hostname': hostname,

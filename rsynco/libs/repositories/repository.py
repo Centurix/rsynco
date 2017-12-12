@@ -10,3 +10,7 @@ class Repository:
 
     def reload(self):
         self.config.data.reload()
+
+    def check_section(self, section_name):
+        if section_name not in self.config.data.keys():
+            self.config.add_section(section_name)

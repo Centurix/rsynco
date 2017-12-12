@@ -1,5 +1,6 @@
 from .repository import Repository
 import logging
+from configobj import Section
 
 
 class JobRepository(Repository):
@@ -23,8 +24,7 @@ class JobRepository(Repository):
         logging.debug('REPOSITORY: Getting all jobs')
         jobs = list()
 
-        if 'jobs' not in self.config.data.keys():
-            return jobs
+        self.check_section('jobs')
 
         for job in self.config.data['jobs']:
             jobs.append({
@@ -40,6 +40,9 @@ class JobRepository(Repository):
 
     def add_job(self, name, from_host, from_path, to_host, to_path, repeat, repeat_every):
         logging.debug('REPOSITORY: Adding job {}'.format(name))
+
+        self.check_section('jobs')
+
         self.config.data['jobs'][name] = {
             'name': name,
             'from_host': from_host,
