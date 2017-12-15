@@ -96,7 +96,8 @@ class Rsync:
                     'from': proc.cmdline()[-2],
                     'to': proc.cmdline()[-1],
                     'progress': self.get_progress(self.find_log_file(proc.open_files())),
-                    'status': proc.status()
+                    'status': proc.status(),
+                    'type': self.task_type(proc)
                 })
 
         logging.debug('Active log files:')
@@ -105,6 +106,12 @@ class Rsync:
         self.cull_dead_logs(active_log_files)
 
         return tasks
+
+    def task_type(self, proc):
+        if "--server" in proc.cmdline():
+            return "server"
+
+        return "client"
 
     def cull_dead_logs(self, current_logs):
         for file in glob.iglob('/tmp/rsync_*.log'):
