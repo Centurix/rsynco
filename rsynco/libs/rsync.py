@@ -77,7 +77,8 @@ class Rsync:
                 'from': proc.cmdline()[-2],
                 'to': proc.cmdline()[-1],
                 'progress': self.get_progress(self.find_log_file(proc.open_files())),
-                'status': proc.status()
+                'status': proc.status(),
+                'type': self.task_type(proc)
             }
         except psutil.NoSuchProcess as ex:
             logging.debug('No such process {}'.format(pid))
