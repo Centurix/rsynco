@@ -124,7 +124,7 @@ class Rsync:
 
     def pause(self, pid):
         logging.debug('Pausing rsync task {}...'.format(pid))
-        os.kill(pid, signal.SIGTSTP)
+        os.kill(pid, signal.SIGSTOP)
 
     def resume(self, pid):
         logging.debug('Resuming rsync task {}...'.format(pid))
