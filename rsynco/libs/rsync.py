@@ -88,17 +88,20 @@ class Rsync:
         tasks = list()
         active_log_files = list()
         for proc in psutil.process_iter():
-            if proc.name() == 'rsync' and len(proc.children()) == 0:
-                active_log_files.append(self.find_log_file(proc.open_files()))
-                tasks.append({
-                    'pid': proc.pid,
-                    'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
-                    'from': proc.cmdline()[-2],
-                    'to': proc.cmdline()[-1],
-                    'progress': self.get_progress(self.find_log_file(proc.open_files())),
-                    'status': proc.status(),
-                    'type': self.task_type(proc)
-                })
+            try:
+                if proc.name() == 'rsync' and len(proc.children()) == 0:
+                    active_log_files.append(self.find_log_file(proc.open_files()))
+                    tasks.append({
+                        'pid': proc.pid,
+                        'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
+                        'from': proc.cmdline()[-2],
+                        'to': proc.cmdline()[-1],
+                        'progress': self.get_progress(self.find_log_file(proc.open_files())),
+                        'status': proc.status(),
+                        'type': self.task_type(proc)
+                    })
+            except psutil.NoSuchProcess:
+                pass  # Probably caught the process terminating before probing for its details, that's ok
 
         logging.debug('Active log files:')
         logging.debug(active_log_files)
