@@ -22,7 +22,8 @@ To pause rsync, send the TSTP signal. Start rsync with --partial.
 # TODO: Add a build process to pipelines and dump a release
 # TODO: Use exceptions throughout
 # TODO: Figure out how to pass the current server address to the SPA
-
+# TODO: Check rsync version as --info=progress2 is only supported in 3.1
+# TODO: Finish the scheduler code
 
 class RsyncoDaemon(Daemon):
     def __init__(self, pidfile):
