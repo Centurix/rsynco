@@ -12,7 +12,8 @@ class ActivityTransformer:
                     'from': activity['from'],
                     'to': activity['to'],
                     'progress': activity['progress'],
-                    'status': activity['status']
+                    'status': activity['status'],
+                    'type': activity['type']
                 }
             })
 

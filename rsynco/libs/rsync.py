@@ -78,7 +78,8 @@ class Rsync:
                 'from': proc.cmdline()[-2],
                 'to': proc.cmdline()[-1],
                 'progress': self.get_progress(self.find_log_file(proc.open_files())),
-                'status': proc.status()
+                'status': proc.status(),
+                'type': self.task_type(proc)
             }
         except psutil.NoSuchProcess as ex:
             logging.debug('No such process {}'.format(pid))
@@ -89,16 +90,20 @@ class Rsync:
         tasks = list()
         active_log_files = list()
         for proc in psutil.process_iter():
-            if proc.name() == 'rsync' and len(proc.children()) == 0 and "--server" not in proc.cmdline():
-                active_log_files.append(self.find_log_file(proc.open_files()))
-                tasks.append({
-                    'pid': proc.pid,
-                    'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
-                    'from': proc.cmdline()[-2],
-                    'to': proc.cmdline()[-1],
-                    'progress': self.get_progress(self.find_log_file(proc.open_files())),
-                    'status': proc.status()
-                })
+            try:
+                if proc.name() == 'rsync' and len(proc.children()) == 0:
+                    active_log_files.append(self.find_log_file(proc.open_files()))
+                    tasks.append({
+                        'pid': proc.pid,
+                        'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
+                        'from': proc.cmdline()[-2],
+                        'to': proc.cmdline()[-1],
+                        'progress': self.get_progress(self.find_log_file(proc.open_files())),
+                        'status': proc.status(),
+                        'type': self.task_type(proc)
+                    })
+            except psutil.NoSuchProcess:
+                pass  # Probably caught the process terminating before probing for its details, that's ok
 
         logging.debug('Active log files:')
         logging.debug(active_log_files)
@@ -107,6 +112,12 @@ class Rsync:
 
         return tasks
 
+    def task_type(self, proc):
+        if "--server" in proc.cmdline():
+            return "server"
+
+        return "client"
+
     def cull_dead_logs(self, current_logs):
         for file in glob.iglob('/tmp/rsync_*.log'):
             if file not in current_logs:
@@ -114,7 +125,7 @@ class Rsync:
 
     def pause(self, pid):
         logging.debug('Pausing rsync task {}...'.format(pid))
-        os.kill(pid, signal.SIGTSTP)
+        os.kill(pid, signal.SIGSTOP)
 
     def resume(self, pid):
         logging.debug('Resuming rsync task {}...'.format(pid))
