@@ -53,6 +53,7 @@ class Rsync:
             source,
             dest
         ])
+        # TODO: Should use the tempfile library here as this does not work in CentOS for some reason.
         with open('/tmp/rsync_%s.log' % uuid.uuid4(), 'w') as logfile:
             psutil.Popen(
                 [
