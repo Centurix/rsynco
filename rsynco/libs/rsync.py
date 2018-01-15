@@ -55,7 +55,7 @@ class Rsync:
             source,
             dest
         ])
-        with tempfile.NamedTemporaryFile(prefix='rsync_') as logfile:
+        with tempfile.NamedTemporaryFile(prefix='rsync_', delete=False) as logfile:
             logging.info('DUMPING TO LOG FILE: {}'.format(logfile.name))
             psutil.Popen(
                 [
