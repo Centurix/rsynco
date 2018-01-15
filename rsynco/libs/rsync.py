@@ -3,10 +3,11 @@ import re
 import os
 import signal
 import datetime
-import uuid
 import logging
 import glob
 import subprocess
+import tempfile
+import pprint
 
 
 class NoHostException(Exception):
@@ -54,8 +55,8 @@ class Rsync:
             source,
             dest
         ])
-        # TODO: Should use the tempfile library here as this does not work in CentOS for some reason.
-        with open('/tmp/rsync_%s.log' % uuid.uuid4(), 'w') as logfile:
+        with tempfile.NamedTemporaryFile(prefix='rsync_') as logfile:
+            logging.info('DUMPING TO LOG FILE: {}'.format(logfile.name))
             psutil.Popen(
                 [
                     'rsync',
@@ -120,7 +121,7 @@ class Rsync:
         return "client"
 
     def cull_dead_logs(self, current_logs):
-        for file in glob.iglob('/tmp/rsync_*.log'):
+        for file in glob.iglob(os.path.join(tempfile.gettempdir(), 'rsync_*')):
             if file not in current_logs:
                 os.remove(file)
 
@@ -185,7 +186,7 @@ class Rsync:
 
     def find_log_file(self, open_files):
         for open_file in open_files:
-            if open_file[0][:11] == "/tmp/rsync_" and open_file[0][-4:] == ".log":
+            if open_file[0].startswith(os.path.join(tempfile.gettempdir(), 'rsync_')):
                 return open_file[0]
 
         return None
