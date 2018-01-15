@@ -139,7 +139,7 @@ class Rsync:
     def exists(self):
         logging.debug('Checking for existence of rsync...')
         try:
-            psutil.Popen(['rsync2', '--version'])
+            psutil.Popen(['rsync', '--version'])
         except FileNotFoundError as fnf:
             return False
 
