@@ -6,6 +6,7 @@ import datetime
 import uuid
 import logging
 import glob
+import subprocess
 
 
 class NoHostException(Exception):
@@ -134,6 +135,30 @@ class Rsync:
     def stop(self, pid):
         logging.debug('Stopping rsync task {}...'.format(pid))
         os.kill(pid, signal.SIGTERM)
+
+    def exists(self):
+        logging.debug('Checking for existence of rsync...')
+        try:
+            psutil.Popen(['rsync2', '--version'])
+        except FileNotFoundError as fnf:
+            return False
+
+        return True
+
+    def version(self):
+        logging.debug('Getting rsync version...')
+
+        process = psutil.Popen(['rsync', '--version'], stdout=subprocess.PIPE)
+        stdout, stderr = process.communicate(input=None)
+
+        matches = re.findall(b'version (\d*)\.(\d*)\.(\d*) ', stdout)
+        if len(matches) == 0:
+            return 0
+
+        if len(matches[0]) != 3:
+            return 0
+
+        return float('{}.{}'.format(int(matches[0][0]), int(matches[0][1])))
 
     def get_progress(self, log_file):
         """

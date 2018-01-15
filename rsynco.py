@@ -4,6 +4,8 @@ import os
 from rsynco import Config
 from rsynco.rsynco_daemon import RsyncoDaemon
 import logging
+from rsynco.libs.rsync import Rsync
+
 
 EXIT_OK = 0
 EXIT_OTHER_ERROR = 1
@@ -31,6 +33,17 @@ if __name__ == "__main__":
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     daemon = RsyncoDaemon(config.data['pidfile'])
+    rsync = Rsync()
+    if not rsync.exists():
+        logging.error('RSYNC NOT INSTALLED, EXITING...')
+        sys.exit(EXIT_OTHER_ERROR)
+
+    version = rsync.version()
+
+    logging.info('Found rsync version {}'.format(version))
+    if version < 3.1:
+        logging.warning('RSYNC VERSION IS BELOW 3.1, SOME FUNCTIONALITY WILL BE UNAVAILABLE')
+
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             logging.info('Starting rsynco...')
