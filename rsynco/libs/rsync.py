@@ -55,20 +55,22 @@ class Rsync:
             source,
             dest
         ])
-        with tempfile.NamedTemporaryFile(prefix='rsync_', delete=False) as logfile:
-            logging.info('DUMPING TO LOG FILE: {}'.format(logfile.name))
-            psutil.Popen(
-                [
-                    'rsync',
-                    '--info=progress2',
-                    '--partial',
-                    '--recursive',
-                    source + '/',
-                    dest
-                ],
-                stdout=logfile
-            )
-            os.wait()
+        #  This does not create a temporary file
+        with tempfile.NamedTemporaryFile(prefix='rsync_') as logfile:
+            with open(logfile.name, 'w') as filehandle:
+                logging.info('DUMPING TO LOG FILE: {}'.format(logfile.name))
+                psutil.Popen(
+                    [
+                        'rsync',
+                        '--info=progress2',
+                        '--partial',
+                        '--recursive',
+                        source + '/',
+                        dest
+                    ],
+                    stdout=filehandle
+                )
+                os.wait()
         return
 
     def get_rsync_task(self, pid):
