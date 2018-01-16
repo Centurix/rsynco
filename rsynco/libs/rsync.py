@@ -8,6 +8,9 @@ import glob
 import subprocess
 import tempfile
 import pprint
+import time
+
+time.sl
 
 
 class NoHostException(Exception):
@@ -56,7 +59,7 @@ class Rsync:
             dest
         ])
         #  This does not create a temporary file
-        with tempfile.NamedTemporaryFile(prefix='rsync_') as logfile:
+        with tempfile.NamedTemporaryFile(mode='w+', prefix='rsync_') as logfile:
             logging.info('DUMPING TO LOG FILE: {}'.format(logfile.name))
             psutil.Popen(
                 [
