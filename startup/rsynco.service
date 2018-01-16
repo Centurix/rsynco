@@ -1,0 +1,17 @@
+[Unit]
+Description=Rsynco Daemon
+After=syslog.target network.target
+
+[Service]
+User=rsynco
+Group=media
+
+Type=oneshot
+WorkingDirectory=/opt/rsynco
+ExecStart=/usr/bin/python3 /opt/rsynco/rsynco.py start
+ExecStop=/usr/bin/python3 /opt/rsynco/rsynco.py stop
+ExecReload=/usr/bin/python3 /opt/rsynco/rsynco.py restart
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
