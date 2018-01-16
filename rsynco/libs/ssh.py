@@ -52,6 +52,7 @@ class SshConfig:
 
 class Ssh:
     def get_contents(self, host, path):
+        # TODO: Make sure that the host is from the correct place
         parsed_path = Path(path)
 
         if host == "localhost":
