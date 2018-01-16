@@ -7,10 +7,6 @@ import logging
 import glob
 import subprocess
 import tempfile
-import pprint
-import time
-
-time.sl
 
 
 class NoHostException(Exception):
