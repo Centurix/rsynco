@@ -24,7 +24,7 @@ class TestDaemon(unittest.TestCase):
 
     # @patch('rsynco.libs.daemon.os')
     # @patch('rsynco.libs.daemon.sys')
-    # @patch('rsynco.libs.daemon.atexit')
+    # @patch('rsynco.libs.daemon.atexit')A
     # def test_daemonize_test_registered_process(self, atexit_object, sys_object, os_object):
     #     os_object.fork = Mock(side_effect=[0, 0])
     #     os_object.getpid = Mock(return_value=1)

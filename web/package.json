@@ -23,7 +23,8 @@
     "vue": "^2.4.2",
     "vue-momentjs": "^0.1.1",
     "vue-router": "^2.7.0",
-    "vue-spinner": "^1.0.3"
+    "vue-spinner": "^1.0.3",
+    "vuejs-datepicker": "^0.9.24"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

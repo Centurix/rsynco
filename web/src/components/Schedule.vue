@@ -8,99 +8,57 @@
         <div class="field">
           <div class="control">
             <div class="select is-fullwidth">
-              <select>
-                <option value="">Not scheduled</option>
-                <option value="once">One-off!</option>
-                <option value="repeat">Repeat</option>
+              <select v-model="type">
+                <option v-for="option in options" v-bind:value="option.value">
+                  {{ option.text }}
+                </option>
               </select>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Every</label>
-      </div>
-      <div class="field-body">
-        <div class="field has-addons">
-          <div class="control">
-            <input type="number" class="input">
-          </div>
-          <div class="control">
-            <span class="button is-primary">Test</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="field is-horizontal">
-      <!-- Daily -->
-      <div class="field-label is-normal">
-        <label class="label">Starts</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div class="control">
-            <input type="text" class="input">
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="field is-horizontal">
-      <!-- Weekly -->
-      <div class="field-label is-normal">
-        <label class="label">Every</label>
-      </div>
-      <div class="field-body">
-        <ul>
-          <li class="field" v-for="weekday in 7">
-            <div class="control">
-              <div class="b-checkbox is-primary">
-                <input type="checkbox" class="styled" v-bind:id="$moment.weekdays(weekday).toLowerCase()">
-                <label v-bind:for="$moment.weekdays(weekday).toLowerCase()">{{ $moment.weekdays(weekday) }}</label>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="field is-horizontal">
-      <!-- Monthly -->
-      <div class="field-label is-normal">
-        <label class="label">Run</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select>
-                <option>Day of the Month</option>
-                <option>Day of the Week</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="field is-horizontal">
-      <!-- Yearly -->
-      <div class="field-label is-normal">
-        <label class="label">Day of the year</label>&nbsp;
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div class="control">
-            <input type="text" class="input">
-          </div>
-        </div>
-      </div>
-    </div>
+    <day v-if="type === 'day'"></day>
+    <hour v-if="type === 'hour'"></hour>
+    <month v-if="type === 'month'"></month>
+    <once v-if="type === 'once'"></once>
+    <second v-if="type === 'second'"></second>
+    <week v-if="type === 'week'"></week>
   </div>
 </template>
 
 <script>
+import Day from './schedules/Day'
+import Hour from './schedules/Hour'
+import Month from './schedules/Month'
+import Once from './schedules/Once'
+import Second from './schedules/Second'
+import Week from './schedules/Week'
+
 export default {
-  name: 'schedule'
+  name: 'schedule',
+  components: {
+    Day,
+    Hour,
+    Month,
+    Once,
+    Second,
+    Week
+  },
+  data () {
+    return {
+      type: 'none',
+      options: [
+        { text: 'Not Schedules', value: 'none' },
+        { text: 'Once-off', value: 'once' },
+        { text: 'Daily', value: 'day' },
+        { text: 'Weekly', value: 'week' },
+        { text: 'Monthly', value: 'month' },
+        { text: 'Hourly', value: 'hour' },
+        { text: 'Seconds', value: 'second' }
+      ]
+    }
+  }
 }
 </script>
 
