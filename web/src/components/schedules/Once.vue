@@ -6,7 +6,7 @@
       </div>
       <div class="field-body">
         <div class="field">
-          <datepicker input-class="input" ></datepicker>
+          <datetime input-class="input"></datetime>
         </div>
       </div>
     </div>
@@ -16,7 +16,6 @@
       </div>
       <div class="field-body">
         <div class="field">
-          <vue-timepicker></vue-timepicker>
         </div>
       </div>
     </div>
@@ -24,15 +23,28 @@
 </template>
 
 <script>
-import Datepicker from 'vuejs-datepicker'
+import { Datetime } from 'vue-datetime'
+import 'vue-datetime/dist/vue-datetime.css'
 
 export default {
   name: 'once',
   components: {
-    Datepicker
+    datetime: Datetime
   }
 }
 </script>
 
 <style>
+.vdatetime-popup__header {
+  background: #ffdd57;
+  color: rgba(0, 0, 0, 0.7);
+}
+.vdatetime-calendar__month__day--selected > span > span,
+.vdatetime-calendar__month__day--selected:hover > span > span{
+  background: #ffdd57;
+  color: rgba(0, 0, 0, 0.7);
+}
+.vdatetime-popup__actions__button {
+  color: rgba(0, 0, 0, 0.7);
+}
 </style>
