@@ -16,6 +16,29 @@
       </div>
       <div class="field-body">
         <div class="field">
+          <div class="control">
+            <div class="select">
+              <select>
+                <option v-for="hour in 12">{{ hour | leftPad(2, '0') }}</option>
+              </select>
+            </div>
+            <div class="select">
+              <select>
+                <option>00</option>
+                <option v-for="minute in 60">{{ minute | leftPad(2, '0') }}</option>
+              </select>
+            </div>
+            <div class="select">
+              <select>
+                <option>AM</option>
+                <option>PM</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+          </div>
         </div>
       </div>
     </div>
@@ -29,7 +52,15 @@ import 'vue-datetime/dist/vue-datetime.css'
 export default {
   name: 'once',
   components: {
-    datetime: Datetime
+    Datetime
+  },
+  filters: {
+    leftPad: function (value) {
+      if (value >= 10) {
+        return value
+      }
+      return '0' + value
+    }
   }
 }
 </script>
