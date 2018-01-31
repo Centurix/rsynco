@@ -5,7 +5,9 @@ import App from './App'
 import router from './router'
 import moment from 'moment'
 import VueMomentJS from 'vue-momentjs'
+import VueRange from 'vue-for-range'
 
+Vue.use(VueRange)
 Vue.use(VueMomentJS, moment)
 Vue.config.productionTip = false
 

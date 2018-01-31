@@ -23,6 +23,7 @@
     "moment": "^2.18.1",
     "vue": "^2.4.2",
     "vue-datetime": "^1.0.0-beta.2",
+    "vue-for-range": "^1.0.2",
     "vue-momentjs": "^0.1.1",
     "vue-router": "^2.7.0",
     "vue-spinner": "^1.0.3",

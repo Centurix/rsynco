@@ -2,16 +2,6 @@
   <div>
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Start</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <datetime input-class="input"></datetime>
-        </div>
-      </div>
-    </div>
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
         <label class="label">Time</label>
       </div>
       <div class="field-body">
