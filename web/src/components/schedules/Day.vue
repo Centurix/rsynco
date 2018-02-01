@@ -8,26 +8,22 @@
         <div class="field">
           <div class="control">
             <div class="select">
-              <select>
-                <option v-for="hour in 12">{{ hour | leftPad(2, '0') }}</option>
+              <select v-model="hour">
+                <option v-for="hour in 12" v-bind:value="hour">{{ hour | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
-              <select>
-                <option>00</option>
-                <option v-for="minute in 60">{{ minute | leftPad(2, '0') }}</option>
+              <select v-model="minute">
+                <option value="0">00</option>
+                <option v-for="minute in 60" v-bind:value="minute">{{ minute | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
-              <select>
-                <option>AM</option>
-                <option>PM</option>
+              <select v-model="meridiem">
+                <option value="am">AM</option>
+                <option value="pm">PM</option>
               </select>
             </div>
-          </div>
-        </div>
-        <div class="field">
-          <div class="control">
           </div>
         </div>
       </div>
@@ -41,6 +37,13 @@ import 'vue-datetime/dist/vue-datetime.css'
 
 export default {
   name: 'day',
+  data () {
+    return {
+      hour: 1,
+      minute: 0,
+      meridiem: 'am'
+    }
+  },
   components: {
     Datetime
   },

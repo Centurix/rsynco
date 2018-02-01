@@ -7,7 +7,7 @@
       <div class="field-body">
         <div class="field has-addons">
           <div class="control is-expanded">
-            <input type="number" class="input" minimum="0" maximum="59" value="0">
+            <input type="number" class="input" minimum="0" maximum="59" v-model="minute">
           </div>
           <div class="control">
             <label class="button is-primary">Minute</label>
@@ -20,7 +20,12 @@
 
 <script>
 export default {
-  name: 'hour'
+  name: 'hour',
+  data () {
+    return {
+      minute: 0
+    }
+  }
 }
 </script>
 
