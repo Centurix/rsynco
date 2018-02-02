@@ -11,6 +11,12 @@ class Activity(ApiHandler):
         self._rsync = Rsync()
 
     def GET(self):
+        """
+        Endpoint: /activity
+        Return: 200 OK
+
+        :return:
+        """
         logging.debug('API: Getting rsync activity')
         return ActivityTransformer.activities(self._rsync.list_rsync_tasks())
 
