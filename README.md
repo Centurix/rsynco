@@ -9,6 +9,7 @@ configobj
 cherrypy
 jsonschema
 schedule
+psutil (Which requires compiling on CentOS, so you'll need gcc, python-devel)
 ```
 
 **Building**
