@@ -123,7 +123,10 @@ class Rsync:
     def cull_dead_logs(self, current_logs):
         for file in glob.iglob(os.path.join(tempfile.gettempdir(), 'rsync_*')):
             if file not in current_logs:
-                os.remove(file)
+                try:
+                    os.remove(file)
+                except PermissionError as pe:
+                    logging.debug('Unable to clear log file {}'.format(file))
 
     def pause(self, pid):
         logging.debug('Pausing rsync task {}...'.format(pid))
