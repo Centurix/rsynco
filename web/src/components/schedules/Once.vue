@@ -6,7 +6,7 @@
       </div>
       <div class="field-body">
         <div class="field">
-          <datepicker input-class="input" ></datepicker>
+          <datetime input-class="input"></datetime>
         </div>
       </div>
     </div>
@@ -16,7 +16,29 @@
       </div>
       <div class="field-body">
         <div class="field">
-          <vue-timepicker></vue-timepicker>
+          <div class="control">
+            <div class="select">
+              <select>
+                <option v-for="hour in 12">{{ hour | leftPad(2, '0') }}</option>
+              </select>
+            </div>
+            <div class="select">
+              <select>
+                <option>00</option>
+                <option v-for="minute in 60">{{ minute | leftPad(2, '0') }}</option>
+              </select>
+            </div>
+            <div class="select">
+              <select>
+                <option>AM</option>
+                <option>PM</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+          </div>
         </div>
       </div>
     </div>
@@ -24,15 +46,36 @@
 </template>
 
 <script>
-import Datepicker from 'vuejs-datepicker'
+import { Datetime } from 'vue-datetime'
+import 'vue-datetime/dist/vue-datetime.css'
 
 export default {
   name: 'once',
   components: {
-    Datepicker
+    Datetime
+  },
+  filters: {
+    leftPad: function (value) {
+      if (value >= 10) {
+        return value
+      }
+      return '0' + value
+    }
   }
 }
 </script>
 
 <style>
+.vdatetime-popup__header {
+  background: #ffdd57;
+  color: rgba(0, 0, 0, 0.7);
+}
+.vdatetime-calendar__month__day--selected > span > span,
+.vdatetime-calendar__month__day--selected:hover > span > span{
+  background: #ffdd57;
+  color: rgba(0, 0, 0, 0.7);
+}
+.vdatetime-popup__actions__button {
+  color: rgba(0, 0, 0, 0.7);
+}
 </style>

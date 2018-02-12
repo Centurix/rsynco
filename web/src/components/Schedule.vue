@@ -49,7 +49,7 @@ export default {
     return {
       type: 'none',
       options: [
-        { text: 'Not Schedules', value: 'none' },
+        { text: 'Not Scheduled', value: 'none' },
         { text: 'Once-off', value: 'once' },
         { text: 'Daily', value: 'day' },
         { text: 'Weekly', value: 'week' },
