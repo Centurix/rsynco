@@ -15,10 +15,60 @@ class NoHostException(Exception):
 
 class Rsync:
     """
+    For rsync 3.1+
+    ==============
+
     This gives an overall percentage progress through the file transfer
     rsync --info=progress2 OfficeTable:/media/share/Software/ISO/Linux/*.* . > /tmp/t.log
     For pause/resume include the --partial option
     rsync --info=progress2 --partial OfficeTable:/media/share/Software/ISO/Linux/*.* . > /tmp/t.log
+
+    For rsync prior to 3.1
+    ======================
+
+    Ref: https://lists.samba.org/archive/rsync/2011-October/027025.html
+
+    We could handle pre 3.1.0 rsync by doing a dry run, parsing the output for the count of files
+
+    rsync -r [src] [dst] --dry-run --out-format=""
+
+    This will output a quick test giving the list of files, types, sizes and total transfer size,
+    we can then use this when we do the real transfer to work out where we are.
+
+    %f = Filename
+    %i = >f+++++++++ (file, plus direction <>) cd+++++++++ (dir)
+    %l = File byte size
+
+    rsync -r centurix@lille.bigsb.net:/home/centurix/Torrents/Data/transfer/ . --dry-run --out-format="['%i','%f','%l']"
+
+    We could annotate the header of the log file for each transfer with the details we need:
+
+    --------------------------------------------
+    rsync: 3.0.9
+    [[FILES]]
+    ['>f+++++++++','.keep','24']
+    ['>f+++++++++','video.mkv','210085346']
+    ['>f+++++++++','video2.mkv','210085346']
+    ['cd+++++++++','test','4096']
+    ['>f+++++++++','test/The Plumber (1979).avi','442853376']
+    [[PROGRESS]]
+    ...
+    --------------------------------------------
+
+    Turns out 3.1+ supports the same options and format, so we could do this to all transfers regardless of version
+
+    --------------------------------------------
+    rsync: 3.1.1
+    [[FILES]]
+    ['>f+++++++++','.keep','24']
+    ['>f+++++++++','video.mkv','210085346']
+    ['>f+++++++++','video2.mkv','210085346']
+    ['cd+++++++++','test','4096']
+    ['>f+++++++++','test/The Plumber (1979).avi','442853376']
+    [[PROGRESS]]
+    ...
+    --------------------------------------------
+
     """
     def __init__(self):
         pass
@@ -57,6 +107,16 @@ class Rsync:
         #  This does not create a temporary file
         with tempfile.NamedTemporaryFile(mode='w+', prefix='rsync_') as logfile:
             logging.info('DUMPING TO LOG FILE: {}'.format(logfile.name))
+            psutil.Popen(
+                [
+                    'rsync',
+                    '--dry-run',
+                    '--recursive',
+                    '--out-format="[%i,%f,%l]"',
+                    source + '/',
+                    dest
+                ]
+            )
             psutil.Popen(
                 [
                     'rsync',
