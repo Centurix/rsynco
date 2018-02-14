@@ -19,56 +19,40 @@ class Rsync:
     ==============
 
     This gives an overall percentage progress through the file transfer
-    rsync --info=progress2 OfficeTable:/media/share/Software/ISO/Linux/*.* . > /tmp/t.log
+    rsync --info=progress2 Server:/media/share/Software/ISO/Linux/*.* . > /tmp/t.log
     For pause/resume include the --partial option
-    rsync --info=progress2 --partial OfficeTable:/media/share/Software/ISO/Linux/*.* . > /tmp/t.log
+    rsync --info=progress2 --partial Server:/media/share/Software/ISO/Linux/*.* . > /tmp/t.log
+
+    This is nice, but there are quite a few distros where rsync isn't this up to date
 
     For rsync prior to 3.1
     ======================
 
     Ref: https://lists.samba.org/archive/rsync/2011-October/027025.html
 
-    We could handle pre 3.1.0 rsync by doing a dry run, parsing the output for the count of files
+    We handle pre 3.1.0 rsync by doing a dry run, parsing the output for the count of files
 
     rsync -r [src] [dst] --dry-run --out-format=""
 
-    This will output a quick test giving the list of files, types, sizes and total transfer size,
-    we can then use this when we do the real transfer to work out where we are.
+    This outputs a quick test giving the list of files, types, sizes and total transfer size,
+    we then use this when we do the real transfer to work out where we are.
 
     %f = Filename
     %i = >f+++++++++ (file, plus direction <>) cd+++++++++ (dir)
     %l = File byte size
 
-    rsync -r centurix@lille.bigsb.net:/home/centurix/Torrents/Data/transfer/ . --dry-run --out-format="['%i','%f','%l']"
+    rsync -r user@server:/home/user/transfer/ . --dry-run --out-format="['%i','%f','%l']"
 
-    We could annotate the header of the log file for each transfer with the details we need:
+    We annotate the header of the log file for each transfer with the details we need:
 
     --------------------------------------------
-    rsync: 3.0.9
-    [[FILES]]
     ['>f+++++++++','.keep','24']
     ['>f+++++++++','video.mkv','210085346']
     ['>f+++++++++','video2.mkv','210085346']
     ['cd+++++++++','test','4096']
-    ['>f+++++++++','test/The Plumber (1979).avi','442853376']
-    [[PROGRESS]]
-    ...
+    ['>f+++++++++','test/video3.avi','442853376']
+    ...Rest of the log
     --------------------------------------------
-
-    Turns out 3.1+ supports the same options and format, so we could do this to all transfers regardless of version
-
-    --------------------------------------------
-    rsync: 3.1.1
-    [[FILES]]
-    ['>f+++++++++','.keep','24']
-    ['>f+++++++++','video.mkv','210085346']
-    ['>f+++++++++','video2.mkv','210085346']
-    ['cd+++++++++','test','4096']
-    ['>f+++++++++','test/The Plumber (1979).avi','442853376']
-    [[PROGRESS]]
-    ...
-    --------------------------------------------
-
     """
     def __init__(self):
         pass
@@ -96,15 +80,6 @@ class Rsync:
         if dest[-1] != '/':
             dest = dest + '/'
 
-        logging.debug([
-            'rsync',
-            '--info=progress2',
-            '--partial',
-            '--recursive',
-            source,
-            dest
-        ])
-        #  This does not create a temporary file
         with tempfile.NamedTemporaryFile(mode='w+', prefix='rsync_') as logfile:
             logging.info('DUMPING TO LOG FILE: {}'.format(logfile.name))
             psutil.Popen(
@@ -112,17 +87,18 @@ class Rsync:
                     'rsync',
                     '--dry-run',
                     '--recursive',
-                    '--out-format="[%i,%f,%l]"',
+                    '--out-format=[%i,%f,%l]',
                     source + '/',
                     dest
-                ]
+                ],
+                stdout=logfile
             )
+            os.wait()
             psutil.Popen(
                 [
                     'rsync',
-                    '--info=progress2',
-                    '--partial',
                     '--recursive',
+                    '--progress',
                     source + '/',
                     dest
                 ],
@@ -229,6 +205,7 @@ class Rsync:
         """
         Check /tmp/pid for the process output to check for output and scan for progress
         If the log file doesn't exist then the process isn't being monitored by rsynco
+        Calculate the total percentage through the transfer from the log.
         :param log_file:
         :return:
         """
@@ -239,13 +216,27 @@ class Rsync:
         log = open(log_file, 'r')
         content = log.read()
         log.close()
-        matches = re.findall(' (\d*)\% ', content)
-        if len(matches) > 0:
-            logging.debug('Progress {}%'.format(matches[-1]))
-            return matches[-1]
 
-        logging.debug('Could not acquire progress')
-        return 100
+        # Get the total count of files and the total file sizes
+        all_files = re.findall('\[>f\+*,(.*),(\d*)\]', content)
+        processed_files = re.findall('(.*)\n\n.*0\%', content)
+        current_percent = int(re.findall('(\d*)\%', content)[-1])
+        current_file = processed_files[-1]
+
+        file_total = 0
+        for file in all_files:
+            file_total = file_total + int(file[1])
+
+        progress_total = 0
+        for processed_file in processed_files:
+            for file in all_files:
+                if processed_file == file[0]:
+                    if processed_file != current_file:
+                        progress_total = progress_total + int(file[1])
+                    else:
+                        progress_total = progress_total + int(int(file[1]) / 100 * current_percent)
+
+        return int(float(progress_total) / file_total * 100)
 
     def find_log_file(self, open_files):
         for open_file in open_files:
