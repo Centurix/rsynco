@@ -88,7 +88,7 @@ class Rsync:
                     '--dry-run',
                     '--recursive',
                     '--out-format=[%i,%f,%l]',
-                    source + '/',
+                    source,
                     dest
                 ],
                 stdout=logfile
@@ -99,7 +99,7 @@ class Rsync:
                     'rsync',
                     '--recursive',
                     '--progress',
-                    source + '/',
+                    source,
                     dest
                 ],
                 stdout=logfile

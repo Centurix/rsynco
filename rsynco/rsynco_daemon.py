@@ -22,8 +22,8 @@ To pause rsync, send the TSTP signal. Start rsync with --partial.
 # TODO: Add a build process to pipelines and dump a release
 # TODO: Use exceptions throughout
 # TODO: Figure out how to pass the current server address to the SPA
-# TODO: Check rsync version as --info=progress2 is only supported in 3.1
 # TODO: Finish the scheduler code
+
 
 class RsyncoDaemon(Daemon):
     def __init__(self, pidfile):
@@ -55,13 +55,15 @@ class RsyncoDaemon(Daemon):
         cherrypy.tree.mount(Hosts(), '/hosts', config=rest_config)
         cherrypy.tree.mount(Jobs(), '/jobs', config=rest_config)
         cherrypy.tree.mount(Paths(), '/paths', config=rest_config)
-        cherrypy.tree.mount(Root(), '/', config={
-            '/': {
-                'tools.staticdir.on': True,
-                'tools.staticdir.dir': self.root,
-                'tools.staticdir.index': 'index.html'
-            }
-        })
+        logging.info('Rsynco UI starting? {}'.format(config.data['ui']))
+        if config.data['ui']:
+            cherrypy.tree.mount(Root(), '/', config={
+                '/': {
+                    'tools.staticdir.on': True,
+                    'tools.staticdir.dir': self.root,
+                    'tools.staticdir.index': 'index.html'
+                }
+            })
 
         logging.debug('Starting CherryPy...')
         cherrypy.engine.start()

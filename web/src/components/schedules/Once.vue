@@ -51,6 +51,9 @@ import 'vue-datetime/dist/vue-datetime.css'
 
 export default {
   name: 'once',
+  data () {
+    return {}
+  },
   components: {
     Datetime
   },
