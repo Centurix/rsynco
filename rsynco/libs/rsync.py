@@ -110,12 +110,14 @@ class Rsync:
     def get_rsync_task(self, pid):
         try:
             proc = psutil.Process(pid)
+            current_progress, current_speed = self.get_progress(self.find_log_file(proc.open_files()))
             return {
                 'pid': proc.pid,
                 'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
                 'from': proc.cmdline()[-2],
                 'to': proc.cmdline()[-1],
-                'progress': self.get_progress(self.find_log_file(proc.open_files())),
+                'progress': current_progress,
+                'speed': current_speed,
                 'status': proc.status(),
                 'type': self.task_type(proc)
             }
@@ -131,12 +133,14 @@ class Rsync:
             try:
                 if proc.name() == 'rsync' and len(proc.children()) == 0:
                     active_log_files.append(self.find_log_file(proc.open_files()))
+                    current_progress, current_speed = self.get_progress(self.find_log_file(proc.open_files()))
                     tasks.append({
                         'pid': proc.pid,
                         'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
                         'from': proc.cmdline()[-2],
                         'to': proc.cmdline()[-1],
-                        'progress': self.get_progress(self.find_log_file(proc.open_files())),
+                        'progress': current_progress,
+                        'speed': current_speed,
                         'status': proc.status(),
                         'type': self.task_type(proc)
                     })
@@ -217,10 +221,16 @@ class Rsync:
         content = log.read()
         log.close()
 
+        logging.debug(content[-200:])
+
         # Get the total count of files and the total file sizes
         all_files = re.findall('\[>f\+*,(.*),(\d*)\]', content)
         processed_files = re.findall('(.*)\n\n.*0\%', content)
         current_percent = int(re.findall('(\d*)\%', content)[-1])
+        speed_matches = re.findall('(\d*\.\d*[G|M|K]B\/s)', content)
+        current_speed = '0.00MB/s'
+        if len(speed_matches) > 0:
+            current_speed = speed_matches[-1]
         current_file = processed_files[-1]
 
         file_total = 0
@@ -236,7 +246,7 @@ class Rsync:
                     else:
                         progress_total = progress_total + int(int(file[1]) / 100 * current_percent)
 
-        return int(float(progress_total) / file_total * 100)
+        return int(float(progress_total) / file_total * 100), current_speed
 
     def find_log_file(self, open_files):
         for open_file in open_files:

@@ -8,6 +8,7 @@
             <th>Process ID</th>
             <th>Started</th>
             <th>Duration</th>
+            <th>Speed</th>
             <th>From</th>
             <th>To</th>
             <th>Progress</th>
@@ -19,6 +20,7 @@
             <td>{{ item.attributes.pid }}</td>
             <td>{{ item.attributes.started }}</td>
             <td>{{ duration(item.attributes.started) }} Seconds</td>
+            <td>{{ item.attributes.speed }}</td>
             <td>{{ item.attributes.from }}</td>
             <td>{{ item.attributes.to }}</td>
             <td>
