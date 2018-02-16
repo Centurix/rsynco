@@ -6,7 +6,7 @@
       </div>
       <div class="field-body">
         <div class="field">
-          <datetime input-class="input"></datetime>
+          <datetime input-class="input" v-model="startDate"></datetime>
         </div>
       </div>
     </div>
@@ -18,26 +18,22 @@
         <div class="field">
           <div class="control">
             <div class="select">
-              <select>
+              <select v-model="startHour">
                 <option v-for="hour in 12">{{ hour | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
-              <select>
+              <select v-model="startMinute">
                 <option>00</option>
                 <option v-for="minute in 60">{{ minute | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
-              <select>
+              <select v-model="startMeridiem">
                 <option>AM</option>
                 <option>PM</option>
               </select>
             </div>
-          </div>
-        </div>
-        <div class="field">
-          <div class="control">
           </div>
         </div>
       </div>
@@ -52,7 +48,12 @@ import 'vue-datetime/dist/vue-datetime.css'
 export default {
   name: 'once',
   data () {
-    return {}
+    return {
+      startDate: this.$moment().toISOString(),
+      startHour: '12',
+      startMinute: '00',
+      startMeridiem: 'AM'
+    }
   },
   components: {
     Datetime

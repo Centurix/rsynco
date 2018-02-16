@@ -9,19 +9,19 @@
           <div class="control">
             <div class="select">
               <select v-model="hour">
-                <option v-for="hour in 12" v-bind:value="hour">{{ hour | leftPad(2, '0') }}</option>
+                <option v-for="hour in 12">{{ hour | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
               <select v-model="minute">
-                <option value="0">00</option>
-                <option v-for="minute in 60" v-bind:value="minute">{{ minute | leftPad(2, '0') }}</option>
+                <option>00</option>
+                <option v-for="minute in 60">{{ minute | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
               <select v-model="meridiem">
-                <option value="am">AM</option>
-                <option value="pm">PM</option>
+                <option>AM</option>
+                <option>PM</option>
               </select>
             </div>
           </div>
@@ -39,9 +39,9 @@ export default {
   name: 'day',
   data () {
     return {
-      hour: 1,
-      minute: 0,
-      meridiem: 'am'
+      hour: '01',
+      minute: '00',
+      meridiem: 'AM'
     }
   },
   components: {
