@@ -11,6 +11,8 @@ pipelines:
         caches:
           - pip
         script: # Modify the commands below to build your repository.
-          - pip install -r requirements.txt
+          - apt-get update
+          - apt install -y rsync
+          - pip3 install -r requirements.txt
           - python -m unittest discover tests
           - python rsynco.py start
