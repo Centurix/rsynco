@@ -11,8 +11,19 @@ pipelines:
         caches:
           - pip
         script: # Modify the commands below to build your repository.
-          - apt-get update
-          - apt install -y rsync
+          - apt update
+          - apt install -y rsync nodejs npm
+          - npm install -g n
+          - n stable
           - pip3 install -r requirements.txt
           - python -m unittest discover tests
+          - cd web
+          - /usr/local/bin/npm install
+          - /usr/local/bin/npm run build
+          - rm -rf node_modules
+          - cd ..
+          - tar zcvf latest.tar.gz *
           - python rsynco.py start
+          - python rsynco.py stop
+        artifacts:
+          - ./latest.tar.gz
