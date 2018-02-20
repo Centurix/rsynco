@@ -23,7 +23,5 @@ pipelines:
           - rm -rf node_modules
           - cd ..
           - tar zcvf latest.tar.gz *
-          - python rsynco.py start
-          - python rsynco.py stop
         artifacts:
           - ./latest.tar.gz
