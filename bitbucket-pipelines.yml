@@ -23,5 +23,6 @@ pipelines:
           - rm -rf node_modules
           - cd ..
           - tar zcvf latest.tar.gz *
+          - curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"latest.tar.gz"
         artifacts:
           - ./latest.tar.gz
