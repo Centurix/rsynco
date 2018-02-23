@@ -7,7 +7,7 @@
       <div class="field-body">
         <div class="field has-addons">
           <div class="control is-expanded">
-            <input type="number" class="input" minimum="10" value="10" v-model="seconds">
+            <input type="number" class="input" min="10" value="10" v-model="seconds">
           </div>
           <div class="control">
             <label class="button is-primary">Second(s)</label>

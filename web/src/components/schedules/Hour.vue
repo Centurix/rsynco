@@ -7,7 +7,7 @@
       <div class="field-body">
         <div class="field has-addons">
           <div class="control is-expanded">
-            <input type="number" class="input" minimum="0" maximum="59" v-model="minute">
+            <input type="number" class="input" min="0" max="59" v-model="minute">
           </div>
           <div class="control">
             <label class="button is-primary">Minute</label>
@@ -31,3 +31,4 @@ export default {
 
 <style>
 </style>
+maximum

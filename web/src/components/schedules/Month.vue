@@ -9,7 +9,7 @@
           <div class="control">
             <div class="select is-fullwidth">
               <select v-model="month">
-                <option v-for="month in $moment.months()" v-bind:class="{current: (month === currentMonth)}" v-bind:value="month">{{ month }} <span v-if="month === currentMonth"> (current)</span></option>
+                <option v-for="month in $moment.months()" v-bind:class="{current: (month.toLowerCase() === currentMonth)}" v-bind:value="month.toLowerCase()">{{ month }} <span v-if="month.toLowerCase() === currentMonth"> (current)</span></option>
               </select>
             </div>
           </div>
@@ -23,7 +23,7 @@
       <div class="field-body">
         <div class="field has-addons">
           <div class="control is-expanded">
-            <input type="number" class="input" minimum="1" v-model="monthFrequency">
+            <input type="number" class="input" min="1" v-model="monthFrequency">
           </div>
             <div class="control">
               <label class="button is-primary">Month(s)</label>
@@ -40,7 +40,7 @@
           <div class="control">
             <div class="select is-fullwidth">
               <select v-model="day">
-                <option v-for="day in 31">{{ $moment().month(0).date(day).format('Do') }}</option>
+                <option v-for="day in 31" v-bind:value="$moment().month(0).date(day).format('D')">{{ $moment().month(0).date(day).format('Do') }}</option>
               </select>
             </div>
           </div>
@@ -61,20 +61,16 @@
             </div>
             <div class="select">
               <select v-model="minute">
-                <option>00</option>
+                <option>0</option>
                 <option v-for="minute in 60">{{ minute | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
               <select v-model="meridiem">
-                <option>AM</option>
-                <option>PM</option>
+                <option value="am">AM</option>
+                <option value="pm">PM</option>
               </select>
             </div>
-          </div>
-        </div>
-        <div class="field">
-          <div class="control">
           </div>
         </div>
       </div>
@@ -87,13 +83,13 @@ export default {
   name: 'month',
   data () {
     return {
-      month: 'january',
+      month: this.$moment().format('MMMM').toLowerCase(),
       monthFrequency: 1,
       day: 1,
       hour: 1,
       minute: 0,
       meridiem: 'am',
-      currentMonth: this.$moment().format('MMMM')
+      currentMonth: this.$moment().format('MMMM').toLowerCase()
     }
   }
 }
