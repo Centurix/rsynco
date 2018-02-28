@@ -129,7 +129,9 @@
               </div>
             </div>
             <div class="column">
-              <schedule></schedule>
+              <schedule
+                v-on:changedSchedule="changedSchedule"
+                v-bind:schedule="this.job.schedule"></schedule>
             </div>
           </div>
         </section>
@@ -180,6 +182,9 @@ export default {
     Schedule
   },
   methods: {
+    changedSchedule (schedule) {
+      this.job.schedule = schedule
+    },
     changeHost: function (type) {
       console.log(this.job.from_host)
       console.log(this.job.to_host)
@@ -235,8 +240,21 @@ export default {
         from_path: '',
         to_host: '',
         to_path: '',
-        repeat: '',
-        repeat_every: 1
+        schedule: {
+          type: 'none',
+          day: 1,
+          days: [],
+          date: this.$moment().toISOString(),
+          hour: 12,
+          minute: 0,
+          second: 0,
+          secondFrequency: 10,
+          meridiem: 'AM',
+          week: this.$moment().week(),
+          weekFrequency: 1,
+          month: 1,
+          monthFrequency: 1
+        }
       }
     },
     newJob: function () {

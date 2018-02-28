@@ -7,7 +7,7 @@
       <div class="field-body">
         <div class="field has-addons">
           <div class="control is-expanded">
-            <input type="number" class="input" min="0" max="59" v-model="minute">
+            <input type="number" class="input" min="0" max="59" v-model.number="startMinute" v-on:change="updated()">
           </div>
           <div class="control">
             <label class="button is-primary">Minute</label>
@@ -21,9 +21,20 @@
 <script>
 export default {
   name: 'hour',
+  props: [
+    'minute'
+  ],
+  created () {
+    this.startMinute = this.minute
+  },
   data () {
     return {
-      minute: 0
+      startMinute: 0
+    }
+  },
+  methods: {
+    updated () {
+      this.$emit('changedMinute', this.startMinute)
     }
   }
 }
@@ -31,4 +42,3 @@ export default {
 
 <style>
 </style>
-maximum

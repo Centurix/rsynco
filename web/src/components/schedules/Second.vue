@@ -7,7 +7,7 @@
       <div class="field-body">
         <div class="field has-addons">
           <div class="control is-expanded">
-            <input type="number" class="input" min="10" value="10" v-model="seconds">
+            <input type="number" class="input" min="10" value="10" v-model="secondFrequency" v-on:change="updated()">
           </div>
           <div class="control">
             <label class="button is-primary">Second(s)</label>
@@ -21,9 +21,20 @@
 <script>
 export default {
   name: 'second',
+  props: [
+    'frequency'
+  ],
+  created () {
+    this.secondFrequency = this.frequency
+  },
   data () {
     return {
-      seconds: 10
+      secondFrequency: 10
+    }
+  },
+  methods: {
+    updated () {
+      this.$emit('changedSecond', this.secondFrequency)
     }
   }
 }

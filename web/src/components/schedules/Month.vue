@@ -8,8 +8,8 @@
         <div class="field">
           <div class="control">
             <div class="select is-fullwidth">
-              <select v-model="month">
-                <option v-for="month in $moment.months()" v-bind:class="{current: (month.toLowerCase() === currentMonth)}" v-bind:value="month.toLowerCase()">{{ month }} <span v-if="month.toLowerCase() === currentMonth"> (current)</span></option>
+              <select v-model.number="startMonth" v-on:change="updated()">
+                <option v-for="(monthName, monthIndex) in $moment.months()" v-bind:class="{current: (monthName.toLowerCase() === currentMonth)}" v-bind:value="monthIndex">{{ monthName }} <span v-if="monthName.toLowerCase() === currentMonth"> (current)</span></option>
               </select>
             </div>
           </div>
@@ -23,7 +23,7 @@
       <div class="field-body">
         <div class="field has-addons">
           <div class="control is-expanded">
-            <input type="number" class="input" min="1" v-model="monthFrequency">
+            <input type="number" class="input" min="1" max="31" v-model.number="monthFrequency" v-on:change="updated()">
           </div>
             <div class="control">
               <label class="button is-primary">Month(s)</label>
@@ -39,8 +39,8 @@
         <div class="field">
           <div class="control">
             <div class="select is-fullwidth">
-              <select v-model="day">
-                <option v-for="day in 31" v-bind:value="$moment().month(0).date(day).format('D')">{{ $moment().month(0).date(day).format('Do') }}</option>
+              <select v-model.number="startDay" v-on:change="updated()">
+                <option v-for="dayIndex in 31" v-bind:value="$moment().month(0).date(dayIndex).format('D')">{{ $moment().month(0).date(dayIndex).format('Do') }}</option>
               </select>
             </div>
           </div>
@@ -55,20 +55,20 @@
         <div class="field">
           <div class="control">
             <div class="select">
-              <select v-model="hour">
-                <option v-for="hour in 12">{{ hour | leftPad(2, '0') }}</option>
+              <select v-model.number="startHour" v-on:change="updated()">
+                <option v-for="hourIndex in 12" v-bind:value="hourIndex">{{ hourIndex | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
-              <select v-model="minute">
-                <option>0</option>
-                <option v-for="minute in 60">{{ minute | leftPad(2, '0') }}</option>
+              <select v-model.number="startMinute" v-on:change="updated()">
+                <option value="0">00</option>
+                <option v-for="minuteIndex in 59" v-bind:value="minuteIndex">{{ minuteIndex | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
-              <select v-model="meridiem">
-                <option value="am">AM</option>
-                <option value="pm">PM</option>
+              <select v-model="startMeridiem" v-on:change="updated()">
+                <option>AM</option>
+                <option>PM</option>
               </select>
             </div>
           </div>
@@ -81,15 +81,44 @@
 <script>
 export default {
   name: 'month',
+  props: [
+    'month',
+    'frequency',
+    'day',
+    'hour',
+    'minute',
+    'meridiem'
+  ],
+  created () {
+    this.startMonth = this.month
+    this.monthFrequency = this.frequency
+    this.startDay = this.day
+    this.startHour = this.hour
+    this.startMinute = this.minute
+    this.startMeridiem = this.meridiem
+  },
   data () {
     return {
-      month: this.$moment().format('MMMM').toLowerCase(),
+      startMonth: this.$moment().format('MMMM').toLowerCase(),
       monthFrequency: 1,
-      day: 1,
-      hour: 1,
-      minute: 0,
-      meridiem: 'am',
+      startDay: 1,
+      startHour: 1,
+      startMinute: 0,
+      startMeridiem: 'AM',
       currentMonth: this.$moment().format('MMMM').toLowerCase()
+    }
+  },
+  methods: {
+    updated () {
+      this.$emit('changedMonth', this.startMonth, this.monthFrequency, this.startDay, this.startHour, this.startMinute, this.startMeridiem)
+    }
+  },
+  filters: {
+    leftPad: function (value) {
+      if (value >= 10) {
+        return value
+      }
+      return '0' + value
     }
   }
 }

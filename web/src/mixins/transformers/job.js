@@ -7,8 +7,7 @@ export default {
         from_path: job.from_path,
         to_host: job.to_host,
         to_path: job.to_path,
-        repeat: job.repeat,
-        repeat_every: job.repeat_every
+        schedule: job.schedule
       }
     },
     newJobTransformer: function (job) {

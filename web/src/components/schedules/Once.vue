@@ -6,7 +6,7 @@
       </div>
       <div class="field-body">
         <div class="field">
-          <datetime input-class="input" v-model="startDate"></datetime>
+          <datetime input-class="input" v-model="startDate" v-on:input="updated()"></datetime>
         </div>
       </div>
     </div>
@@ -18,18 +18,18 @@
         <div class="field">
           <div class="control">
             <div class="select">
-              <select v-model="startHour">
-                <option v-for="hour in 12">{{ hour | leftPad(2, '0') }}</option>
+              <select v-model.number="startHour" v-on:change="updated()">
+                <option v-for="hourIndex in 12" v-bind:value="hourIndex">{{ hourIndex | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
-              <select v-model="startMinute">
-                <option>00</option>
-                <option v-for="minute in 60">{{ minute | leftPad(2, '0') }}</option>
+              <select v-model.number="startMinute" v-on:change="updated()">
+                <option value="0">00</option>
+                <option v-for="minuteIndex in 59" v-bind:value="minuteIndex">{{ minuteIndex | leftPad(2, '0') }}</option>
               </select>
             </div>
             <div class="select">
-              <select v-model="startMeridiem">
+              <select v-model="startMeridiem" v-on:change="updated()">
                 <option>AM</option>
                 <option>PM</option>
               </select>
@@ -47,11 +47,28 @@ import 'vue-datetime/dist/vue-datetime.css'
 
 export default {
   name: 'once',
+  props: [
+    'date',
+    'hour',
+    'minute',
+    'meridiem'
+  ],
+  created () {
+    this.startDate = this.date
+    this.startHour = this.hour
+    this.startMinute = this.minute
+    this.startMeridiem = this.meridiem
+  },
+  methods: {
+    updated () {
+      this.$emit('changedOnce', this.startDate, this.startHour, this.startMinute, this.startMeridiem)
+    }
+  },
   data () {
     return {
       startDate: this.$moment().toISOString(),
-      startHour: '12',
-      startMinute: '00',
+      startHour: 12,
+      startMinute: 0,
       startMeridiem: 'AM'
     }
   },
