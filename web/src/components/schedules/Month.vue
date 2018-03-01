@@ -89,6 +89,26 @@ export default {
     'minute',
     'meridiem'
   ],
+  watch: {
+    month: function (newVal, oldVal) {
+      this.startMonth = newVal
+    },
+    frequency: function (newVal, oldVal) {
+      this.monthFrequency = newVal
+    },
+    day: function (newVal, oldVal) {
+      this.startDay = newVal
+    },
+    hour: function (newVal, oldVal) {
+      this.startHour = newVal
+    },
+    minute: function (newVal, oldVal) {
+      this.startMinute = newVal
+    },
+    meridiem: function (newVal, oldVal) {
+      this.startMeridiem = newVal
+    }
+  },
   created () {
     this.startMonth = this.month
     this.monthFrequency = this.frequency

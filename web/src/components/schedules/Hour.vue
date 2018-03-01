@@ -24,6 +24,11 @@ export default {
   props: [
     'minute'
   ],
+  watch: {
+    minute: function (newVal, oldVal) {
+      this.startMinute = this.minute
+    }
+  },
   created () {
     this.startMinute = this.minute
   },

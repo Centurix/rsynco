@@ -95,6 +95,26 @@ export default {
     'minute',
     'meridiem'
   ],
+  watch: {
+    week: function (newVal, oldVal) {
+      this.startWeek = newVal
+    },
+    frequency: function (newVal, oldVal) {
+      this.weekFrequency = newVal
+    },
+    days: function (newVal, oldVal) {
+      this.weekDays = newVal
+    },
+    hour: function (newVal, oldVal) {
+      this.startHour = newVal
+    },
+    minute: function (newVal, oldVal) {
+      this.startMinute = newVal
+    },
+    meridiem: function (newVal, oldVal) {
+      this.startMeridiem = newVal
+    }
+  },
   created () {
     this.startWeek = this.week
     this.weekFrequency = this.frequency

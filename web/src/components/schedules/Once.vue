@@ -53,6 +53,20 @@ export default {
     'minute',
     'meridiem'
   ],
+  watch: {
+    date: function (newVal, oldVal) {
+      this.startDate = newVal
+    },
+    hour: function (newVal, oldVal) {
+      this.startHour = newVal
+    },
+    minute: function (newVal, oldVal) {
+      this.startMinute = newVal
+    },
+    meridiem: function (newVal, oldVal) {
+      this.startMeridiem = newVal
+    }
+  },
   created () {
     this.startDate = this.date
     this.startHour = this.hour
@@ -61,12 +75,12 @@ export default {
   },
   methods: {
     updated () {
-      this.$emit('changedOnce', this.startDate, this.startHour, this.startMinute, this.startMeridiem)
+      this.$emit('changedOnce', this.startDate.substr(0, 10), this.startHour, this.startMinute, this.startMeridiem)
     }
   },
   data () {
     return {
-      startDate: this.$moment().toISOString(),
+      startDate: this.$moment().format('YYYY-MM-DD'),
       startHour: 12,
       startMinute: 0,
       startMeridiem: 'AM'

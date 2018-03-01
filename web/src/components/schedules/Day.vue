@@ -42,6 +42,17 @@ export default {
     'minute',
     'meridiem'
   ],
+  watch: {
+    hour: function (newVal, oldVal) {
+      this.startHour = newVal
+    },
+    minute: function (newVal, oldVal) {
+      this.startMinute = newVal
+    },
+    meridiem: function (newVal, oldVal) {
+      this.startMeridiem = newVal
+    }
+  },
   created () {
     this.startHour = this.hour
     this.startMinute = this.minute

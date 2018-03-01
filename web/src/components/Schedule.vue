@@ -67,7 +67,13 @@ export default {
   props: [
     'schedule'
   ],
-  created () {
+  watch: {
+    schedule: function (newVal, oldVal) {
+      console.log('Schedule UPDATED')
+      this.currentSchedule = newVal
+    }
+  },
+  mounted () {
     this.currentSchedule = this.schedule
   },
   components: {
@@ -128,7 +134,7 @@ export default {
         type: 'none',
         day: 1,
         days: [],
-        date: this.$moment().toISOString(),
+        date: this.$moment().format('YYYY-MM-DD'),
         hour: 12,
         minute: 0,
         second: 0,

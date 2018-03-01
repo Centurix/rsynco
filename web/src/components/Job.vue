@@ -131,7 +131,7 @@
             <div class="column">
               <schedule
                 v-on:changedSchedule="changedSchedule"
-                v-bind:schedule="this.job.schedule"></schedule>
+                v-bind:schedule="job.schedule"></schedule>
             </div>
           </div>
         </section>
@@ -244,7 +244,7 @@ export default {
           type: 'none',
           day: 1,
           days: [],
-          date: this.$moment().toISOString(),
+          date: this.$moment().format('YYYY-MM-DD'),
           hour: 12,
           minute: 0,
           second: 0,

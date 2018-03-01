@@ -33,8 +33,7 @@ class Jobs(ApiHandler):
             data['from_path'],
             data['to_host'],
             data['to_path'],
-            data['repeat'],
-            data['repeat_every']
+            data['schedule']
         )
         cherrypy.response.status = 201
         logging.debug('API: Sending data to the QUEUE')
@@ -51,8 +50,7 @@ class Jobs(ApiHandler):
             data['from_path'],
             data['to_host'],
             data['to_path'],
-            data['repeat'],
-            data['repeat_every']
+            data['schedule']
         )
         logging.debug('API: Sending data to the QUEUE')
         job_queue.put(data['name'])
