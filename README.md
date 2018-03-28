@@ -2,6 +2,26 @@
 
 Web based rsync management tool
 
+This project aims to be a comprehensive rsync management tool for systems where data has to be transferred using rsync on a regular basis. Using this tool you can:
+
+* Setup rsync jobs with schedules
+* Create lists of remote hosts
+* Use the built in SSH configuration for remote hosts
+* Start/Stop/Pause rsync tasks
+* Monitor rsync transfer statuses
+* Monitor overall rsync transfer progress
+* Monitor rsync transfer speed between systems
+* Run rsync tasks asyncronously
+* Monitor multiple computers with a single rsynco activity screen
+* Provide transfer statuses to various monitoring tools like Splunk
+* Provide a REST API for controlling rsync jobs
+
+**Todo**
+* Improve the scheduler
+* Add auth
+* Test coverage
+* Blueprint the API
+
 **Python package requirements**
 
 ```
