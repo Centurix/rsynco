@@ -15,15 +15,14 @@ from .scheduler import Scheduler
 To pause rsync, send the TSTP signal. Start rsync with --partial.
 """
 # TODO: Validate job paths
-# TODO: Add path explorer to job creation
 # TODO: Create self-documenting API endpoints for blueprint
-# TODO: Tests
 # TODO: Make sure this is init.d/systemd/whatever friendly
 # TODO: Include boilerplate for pip, pypi and other repositories
 # TODO: Some kind of basic authentication
 # TODO: Add a build process to pipelines and dump a release
 # TODO: Use exceptions throughout
 # TODO: Figure out how to pass the current server address to the SPA
+# TODO: Finish the scheduler code
 
 
 class RsyncoDaemon(Daemon):
@@ -56,13 +55,15 @@ class RsyncoDaemon(Daemon):
         cherrypy.tree.mount(Hosts(), '/hosts', config=rest_config)
         cherrypy.tree.mount(Jobs(), '/jobs', config=rest_config)
         cherrypy.tree.mount(Paths(), '/paths', config=rest_config)
-        cherrypy.tree.mount(Root(), '/', config={
-            '/': {
-                'tools.staticdir.on': True,
-                'tools.staticdir.dir': self.root,
-                'tools.staticdir.index': 'index.html'
-            }
-        })
+        logging.info('Rsynco UI starting? {}'.format(config.data['ui']))
+        if config.data['ui']:
+            cherrypy.tree.mount(Root(), '/', config={
+                '/': {
+                    'tools.staticdir.on': True,
+                    'tools.staticdir.dir': self.root,
+                    'tools.staticdir.index': 'index.html'
+                }
+            })
 
         logging.debug('Starting CherryPy...')
         cherrypy.engine.start()

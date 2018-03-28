@@ -1,2 +1,2 @@
-class Root(object):
+class Root(object):  # pragma: no cover
     pass

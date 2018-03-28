@@ -129,102 +129,9 @@
               </div>
             </div>
             <div class="column">
-              <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                  <label class="label">Repeat</label>
-                </div>
-                <div class="field-body">
-                  <div class="field">
-                    <div class="control">
-                      <div class="select is-fullwidth">
-                        <select v-model="job.repeat">
-                          <option value="">Not scheduled</option>
-                          <option value="seconds">Second</option>
-                          <option value="minutes">Minute</option>
-                          <option value="hours">Hour</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="field is-horizontal" v-show="job.repeat != ''">
-                <div class="field-label is-normal">
-                  <label class="label">Every</label>
-                </div>
-                <div class="field-body">
-                  <div class="field has-addons">
-                    <div class="control">
-                      <input type="number" class="input" v-model.number="job.repeat_every">
-                    </div>
-                    <div class="control">
-                      <span class="button is-primary">{{ job.repeat }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="field is-horizontal" v-show="job.repeat == 'days'">
-                <!-- Daily -->
-                <div class="field-label is-normal">
-                  <label class="label">Starts</label>
-                </div>
-                <div class="field-body">
-                  <div class="field">
-                    <div class="control">
-                      <input type="text" class="input">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="field is-horizontal" v-show="job.repeat != 'weeks'">
-                <!-- Weekly -->
-                <div class="field-label is-normal">
-                  <label class="label">Every</label>
-                </div>
-                <div class="field-body">
-                  <ul>
-                    <li class="field" v-for="weekday in 7">
-                      <div class="control">
-                        <div class="b-checkbox is-primary">
-                          <input type="checkbox" class="styled" v-bind:id="$moment.weekdays(weekday).toLowerCase()">
-                          <label v-bind:for="$moment.weekdays(weekday).toLowerCase()">{{ $moment.weekdays(weekday) }}</label>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="field is-horizontal" v-show="job.repeat == 'months'">
-                <!-- Monthly -->
-                <div class="field-label is-normal">
-                  <label class="label">Run</label>
-                </div>
-                <div class="field-body">
-                  <div class="field">
-                    <div class="control">
-                      <div class="select is-fullwidth">
-                        <select>
-                          <option>Day of the Month</option>
-                          <option>Day of the Week</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="field is-horizontal" v-show="job.repeat == 'years'">
-                <!-- Yearly -->
-                <div class="field-label is-normal">
-                  <label class="label">Day of the year</label>&nbsp;
-                </div>
-                <div class="field-body">
-                  <div class="field">
-                    <div class="control">
-                      <input type="text" class="input">
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <schedule
+                v-on:changedSchedule="changedSchedule"
+                v-bind:schedule="job.schedule"></schedule>
             </div>
           </div>
         </section>
@@ -247,6 +154,7 @@ import Browser from './Browser'
 import EventBus from '../eventbus'
 import Validation from '../mixins/validation'
 import JobTransformers from '../mixins/transformers/job'
+import Schedule from './Schedule'
 
 export default {
   name: 'job',
@@ -270,9 +178,13 @@ export default {
   },
   components: {
     Host,
-    Browser
+    Browser,
+    Schedule
   },
   methods: {
+    changedSchedule (schedule) {
+      this.job.schedule = schedule
+    },
     changeHost: function (type) {
       console.log(this.job.from_host)
       console.log(this.job.to_host)
@@ -328,8 +240,21 @@ export default {
         from_path: '',
         to_host: '',
         to_path: '',
-        repeat: '',
-        repeat_every: 1
+        schedule: {
+          type: 'none',
+          day: 1,
+          days: [],
+          date: this.$moment().format('YYYY-MM-DD'),
+          hour: 12,
+          minute: 0,
+          second: 0,
+          secondFrequency: 10,
+          meridiem: 'AM',
+          week: this.$moment().week(),
+          weekFrequency: 1,
+          month: 1,
+          monthFrequency: 1
+        }
       }
     },
     newJob: function () {

@@ -2,6 +2,7 @@ from .repository import Repository
 from ..ssh import SshConfig
 from pathlib import Path
 import logging
+import os
 
 
 class HostRepository(Repository):
@@ -25,7 +26,8 @@ class HostRepository(Repository):
         return hosts
 
     def get_user_ssh_config_hosts(self):
-        ssh_config_file = Path(str(Path.home()), '.ssh', 'config')
+        ssh_config_file = Path(str(os.path.expanduser('~/.ssh')), 'config')
+        # ssh_config_file = Path(str(Path.home()), '.ssh', 'config')  # Python 3.5, Path.home()
         if ssh_config_file.is_file():
             ssh_config = SshConfig(ssh_config_file)
             return ssh_config.hosts
@@ -44,6 +46,9 @@ class HostRepository(Repository):
     def get_hosts(self):
         logging.debug('REPOSITORY: Getting rsynco hosts')
         hosts = list()
+
+        self.check_section('hosts')
+
         for host in self.config.data['hosts']:
             hosts.append({
                 'host': host,
@@ -78,6 +83,9 @@ class HostRepository(Repository):
 
     def add_host(self, host, hostname, port, username, password):
         logging.debug('REPOSITORY: Adding host {}'.format(host))
+
+        self.check_section('hosts')
+
         self.config.data['hosts'][host] = {
             'host': host,
             'hostname': hostname,

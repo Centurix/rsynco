@@ -1,0 +1,28 @@
+# This is a sample build configuration for Python.
+# Check our guides at https://confluence.atlassian.com/x/x4UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: python:3.5.1
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - pip
+        script: # Modify the commands below to build your repository.
+          - apt update
+          - apt install -y rsync nodejs npm
+          - npm install -g n
+          - n stable
+          - pip3 install -r requirements.txt
+          - python -m unittest discover tests
+          - cd web
+          - /usr/local/bin/npm install
+          - /usr/local/bin/npm run build
+          - rm -rf node_modules
+          - cd ..
+          - tar zcvf latest.tar.gz *
+          - curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"latest.tar.gz"
+        artifacts:
+          - ./latest.tar.gz

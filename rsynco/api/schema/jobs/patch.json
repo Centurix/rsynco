@@ -25,8 +25,26 @@
               "to_host": {"type": "string", "minLength": 1},
               "to_path": {"type": "string", "minLength": 1},
               "status": {"type": "string", "minLength": 1},
-              "repeat": {"type": "string"},
-              "repeat_every": {"type": "integer"}
+              "schedule": {
+                "type": "object",
+                "required": [],
+                "additionalProperties": false,
+                "properties": {
+                  "date": {"type": "string"},
+                  "day": {"type": "integer"},
+                  "days": {"type": "array"},
+                  "hour": {"type": "integer"},
+                  "meridiem": {"type": "string"},
+                  "minute": {"type": "integer"},
+                  "month": {"type": "integer"},
+                  "monthFrequency": {"type": "integer"},
+                  "second": {"type": "integer"},
+                  "secondFrequency": {"type": "integer"},
+                  "type": {"type": "string"},
+                  "week": {"type": "integer"},
+                  "weekFrequency": {"type": "integer"}
+                }
+              }
             }
           }
         }

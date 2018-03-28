@@ -27,3 +27,6 @@ class Config:
 
     def refresh(self):
         self.data.reload()
+
+    def add_section(self, section_name):
+        self.data[section_name] = {}

@@ -19,11 +19,15 @@
     "bulma-badge": "0.0.3",
     "cool-checkboxes-for-bulma.io": "^1.1.0",
     "font-awesome": "^4.7.0",
+    "luxon": "^0.3.1",
     "moment": "^2.18.1",
     "vue": "^2.4.2",
+    "vue-datetime": "^1.0.0-beta.2",
+    "vue-for-range": "^1.0.2",
     "vue-momentjs": "^0.1.1",
     "vue-router": "^2.7.0",
-    "vue-spinner": "^1.0.3"
+    "vue-spinner": "^1.0.3",
+    "weekstart": "^1.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -70,7 +74,7 @@
     "karma-webpack": "^2.0.2",
     "mocha": "^3.2.0",
     "nightwatch": "^0.9.12",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.7.2",
     "opn": "^5.1.0",
     "optimize-css-assets-webpack-plugin": "^2.0.0",
     "ora": "^1.2.0",
@@ -86,6 +90,7 @@
     "vue-loader": "^13.0.4",
     "vue-style-loader": "^3.0.3",
     "vue-template-compiler": "^2.4.2",
+    "vue2-timepicker": "git+https://github.com/xxRockOnxx/vue2-timepicker.git",
     "webpack": "^2.6.1",
     "webpack-bundle-analyzer": "^2.2.1",
     "webpack-dev-middleware": "^1.10.0",

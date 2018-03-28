@@ -4,6 +4,8 @@ import os
 from rsynco import Config
 from rsynco.rsynco_daemon import RsyncoDaemon
 import logging
+from rsynco.libs.rsync import Rsync
+
 
 EXIT_OK = 0
 EXIT_OTHER_ERROR = 1
@@ -15,6 +17,21 @@ config_spec = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'configs
 
 def usage():
     logging.info("usage: %s start|stop|restart" % sys.argv[0])
+
+
+def check_environment():
+    rsync = Rsync()
+    if not rsync.exists():
+        logging.error('RSYNC NOT INSTALLED, EXITING...')
+        return False
+
+    version = rsync.version()
+
+    logging.info('Found rsync version {}'.format(version))
+    if version < 3.1:
+        logging.warning('RSYNC VERSION IS BELOW 3.1, SOME FUNCTIONALITY WILL BE UNAVAILABLE')
+
+    return True
 
 
 if __name__ == "__main__":
@@ -31,14 +48,22 @@ if __name__ == "__main__":
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     daemon = RsyncoDaemon(config.data['pidfile'])
+
+    #  This should probably only happen in daemon.start() and daemon.restart()
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
+            if not check_environment():
+                sys.exit(EXIT_OTHER_ERROR)
+
             logging.info('Starting rsynco...')
             daemon.start()
         elif 'stop' == sys.argv[1]:
             logging.info('Stopping rsynco...')
             daemon.stop()
         elif 'restart' == sys.argv[1]:
+            if not check_environment():
+                sys.exit(EXIT_OTHER_ERROR)
+
             logging.info('Re-starting rsynco...')
             daemon.restart()
         elif 'status' == sys.argv[1]:

@@ -1,3 +1,6 @@
+from datetime import date
+
+
 class JobTransformer:
     @staticmethod
     def jobs(jobs):
@@ -13,8 +16,21 @@ class JobTransformer:
                     'from_path': job['from_path'],
                     'to_host': job['to_host'],
                     'to_path': job['to_path'],
-                    'repeat': job['repeat'],
-                    'repeat_every': job['repeat_every']
+                    'schedule': {
+                        'type': job['schedule']['type'],
+                        'day': job['schedule']['day'],
+                        'days': job['schedule']['days'],
+                        'date': job['schedule']['date'],
+                        'hour': job['schedule']['hour'],
+                        'minute': job['schedule']['minute'],
+                        'second': job['schedule']['second'],
+                        'secondFrequency': job['schedule']['secondFrequency'],
+                        'meridiem': job['schedule']['meridiem'],
+                        'week': job['schedule']['week'],
+                        'weekFrequency': job['schedule']['weekFrequency'],
+                        'month': job['schedule']['month'],
+                        'monthFrequency': job['schedule']['monthFrequency']
+                    }
                 }
             })
 
@@ -33,8 +49,21 @@ class JobTransformer:
                     'from_path': '',
                     'to_host': '',
                     'to_path': '',
-                    'repeat': '',
-                    'repeat_every': 1
+                    'schedule': {
+                        'type': 'none',
+                        'day': 1,
+                        'days': [],
+                        'date': date.today().isoformat(),
+                        'hour': 12,
+                        'minute': 0,
+                        'second': 0,
+                        'secondFrequency': 10,
+                        'meridiem': 'AM',
+                        'week': 1,
+                        'weekFrequency': 1,
+                        'month': 1,
+                        'monthFrequency': 1
+                    }
                 }
             }]
         }

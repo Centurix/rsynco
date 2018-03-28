@@ -4,9 +4,10 @@ import time
 import schedule
 from rsynco.libs.repositories.job_repository import JobRepository
 from rsynco.libs.repositories.host_repository import HostRepository
-from rsynco.libs.rsync import Rsync
+from rsynco.libs.rsync import Rsync, NoHostException
 from rsynco import job_queue
 import queue
+from datetime import datetime
 
 
 """
@@ -32,12 +33,15 @@ class Scheduler(threading.Thread):
         job = self._JobRepository.get_job(job_name)
         logging.debug('Scheduler: Starting rsync from host {} to host {}'.format(job['from_host'], job['to_host']))
 
-        self._Rsync.process(
-            self._HostRepository.get_host(job['from_host']),
-            job['from_path'],
-            self._HostRepository.get_host(job['to_host']),
-            job['to_path']
-        )
+        try:
+            self._Rsync.process(
+                self._HostRepository.get_host(job['from_host']),
+                job['from_path'],
+                self._HostRepository.get_host(job['to_host']),
+                job['to_path']
+            )
+        except NoHostException as no_host:
+            logging.error(no_host)
 
     def run(self):
         logging.info('Starting scheduler thread...')
@@ -74,12 +78,52 @@ class Scheduler(threading.Thread):
         logging.debug('Adding job schedule {}'.format(job_name))
         self._JobRepository.reload()
         job = self._JobRepository.get_job(job_name)
-        if job['repeat'] == 'seconds':
-            self.add_schedule_seconds(int(job['repeat_every']), job['name'])
-        elif job['repeat'] == 'minutes':
-            self.add_schedule_minutes(int(job['repeat_every']), job['name'])
-        elif job['repeat'] == 'hours':
-            self.add_schedule_hours(int(job['repeat_every']), job['name'])
+        job_schedule = job['schedule']
+        if job_schedule['type'] == 'once':
+            self.add_schedule_once(
+                job['name'],
+                job_schedule['date'],
+                int(job_schedule['hour']),
+                int(job_schedule['minute']),
+                job_schedule['meridiem']
+            )
+        elif job_schedule['type'] == 'day':
+            self.add_schedule_day(
+                job['name'],
+                int(job_schedule['hour']),
+                int(job_schedule['minute']),
+                job_schedule['meridiem']
+            )
+        elif job_schedule['type'] == 'week':
+            self.add_schedule_week(
+                job['name'],
+                int(job_schedule['week']),
+                int(job_schedule['weekFrequency']),
+                job_schedule['days'],
+                int(job_schedule['hour']),
+                int(job_schedule['minute']),
+                job_schedule['meridiem']
+            )
+        elif job_schedule['type'] == 'month':
+            self.add_schedule_month(
+                job['name'],
+                int(job_schedule['month']),
+                int(job_schedule['monthFrequency']),
+                job_schedule['days'],
+                int(job_schedule['hour']),
+                int(job_schedule['minute']),
+                job_schedule['meridiem']
+            )
+        elif job_schedule['type'] == 'hour':
+            self.add_schedule_hour(
+                job['name'],
+                int(job_schedule['minute'])
+            )
+        elif job_schedule['type'] == 'second':
+            self.add_schedule_second(
+                job['name'],
+                int(job_schedule['secondFrequency'])
+            )
 
     def delete_schedule(self, job_name):
         logging.debug('Deleting job schedule {}'.format(job_name))
@@ -90,19 +134,65 @@ class Scheduler(threading.Thread):
         self.delete_schedule(job_name)
         self.add_schedule(job_name)
 
-    def add_schedule_seconds(self, seconds, job_name):
-        logging.debug('Adding schedule for job {} for every {} seconds'.format(job_name, seconds))
-        schedule.every(seconds).seconds.do(self.run_job, job_name).tag(job_name)
-        logging.debug(schedule.jobs)
+    def add_schedule_once(self, job_name, date, hour, minute, meridiem):
+        """
+        TODO: Make this run only once
+        """
+        logging.debug('Adding once-off schedule for job {}'.format(job_name))
+        schedule.every()\
+            .day\
+            .at(self.meridiem_time_to_24_hour(hour, minute, meridiem))\
+            .do(self.run_job, job_name)\
+            .tag(job_name)
+        logging.debug('Added job')
 
-    def add_schedule_minutes(self, minutes, job_name):
-        logging.debug('Adding schedule for job {} for every {} minutes'.format(job_name, minutes))
-        logging.debug(schedule.jobs)
-        schedule.every(minutes).minutes.do(self.run_job, job_name).tag(job_name)
-        for job in schedule.jobs:
-            logging.debug(job.tags)
+    def add_schedule_day(self, job_name, hour, minute, meridiem):
+        logging.debug('Adding daily schedule for job {}'.format(job_name))
+        schedule.every()\
+            .day\
+            .at(self.meridiem_time_to_24_hour(hour, minute, meridiem))\
+            .do(self.run_job, job_name)\
+            .tag(job_name)
 
-    def add_schedule_hours(self, hours, job_name):
-        logging.debug('Adding schedule for job {} for every {} hours'.format(job_name, hours))
-        schedule.every(hours).hours.do(self.run_job, job_name).tag(job_name)
-        logging.debug(schedule.jobs)
+    def add_schedule_week(self, job_name, start_week, week_frequency, days, hour, minute, meridiem):
+        """
+        TODO: start_week not used, remove from UI
+        TODO: Schedule only performs one day of the week rather than select days of the week
+        """
+        logging.debug('Adding weekly schedule for job {}'.format(job_name))
+        schedule.every(week_frequency)\
+            .monday\
+            .at(self.meridiem_time_to_24_hour(hour, minute, meridiem))\
+            .do(self.run_job, job_name)\
+            .tag(job_name)
+
+    def add_schedule_month(self, job_name, start_month, month_frequency, day, hour, minute, meridiem):
+        """
+        Hmm, schedule doesn't do every month. Cheat and do every 30 days...
+        TODO: start_month is unused at the moment, maybe remove it from the UI
+        """
+        logging.debug('Adding monthly schedule for job {}'.format(job_name))
+        schedule.every(month_frequency * 30)\
+            .days()\
+            .at(self.meridiem_time_to_24_hour(hour, minute, meridiem))\
+            .do(self.run_job, job_name)\
+            .tag(job_name)
+
+    def add_schedule_hour(self, job_name, minute):
+        logging.debug('Adding schedule for job {} to run every {} minute pas the hour'.format(job_name, minute))
+        schedule.every()\
+            .hours\
+            .at('0:{}'.format(minute))\
+            .do(self.run_job, job_name)\
+            .tag(job_name)
+
+    def add_schedule_second(self, job_name, second_frequency):
+        logging.debug('Adding schedule for job {} to run ever {} seconds'.format(job_name, second_frequency))
+        schedule.every(second_frequency)\
+            .seconds\
+            .do(self.run_job, job_name)\
+            .tag(job_name)
+
+    def meridiem_time_to_24_hour(self, hour, minute, meridiem):
+        parsed_datetime = datetime.strptime('{:02d}:{:02d} {}'.format(hour, minute, meridiem), '%I:%M %p')
+        return parsed_datetime.strftime('%H:%M')

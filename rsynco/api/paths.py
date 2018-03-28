@@ -20,4 +20,5 @@ class Paths(ApiHandler):
             sorted_contents = sorted(contents, key=lambda x: x['type'] + ':' + x['name'].lower(), reverse=False)
             return PathTransformer.paths(sorted_contents)
         except PathNotFoundException as e:
+            logging.warning('API: Path {} not found, nearest path {}'.format(path, e.nearest_path))
             return PathTransformer.nearest_path(e.nearest_path)

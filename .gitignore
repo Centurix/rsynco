@@ -4,3 +4,4 @@ __pycache__
 *.ini
 !configspec.ini
 rsynco.log
+.coverage

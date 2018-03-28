@@ -23,7 +23,7 @@ class SshConfig:
         return dict({'host': '', 'hostname': '', 'port': 22, 'username': '', 'password': '', 'type': 'system'})
 
     def parse(self):
-        logging.debug('Parsing SSH config file {}'.format(str(self.file)))
+        logging.debug('Parsing SSH config file {}'.format(str(self.file.as_posix())))
         if not self.file.is_file():
             logging.debug('SSH config does not exist')
             return
@@ -52,6 +52,7 @@ class SshConfig:
 
 class Ssh:
     def get_contents(self, host, path):
+        # TODO: Make sure that the host is from the correct place
         parsed_path = Path(path)
 
         if host == "localhost":
@@ -96,11 +97,15 @@ class Ssh:
         return contents
 
     def remote_exists(self, host, path):
-        p = psutil.Popen(['ssh', host, 'ls', '-Fa', path.as_posix()], stdout=PIPE, stderr=PIPE)
+        logging.debug("Escaping path")
+        escaped_path = '""{}""'.format(path.as_posix().replace(' ', '\\ '))
+        p = psutil.Popen(['ssh', host, 'ls', '-Fa', escaped_path], stdout=PIPE, stderr=PIPE)
         main_output, main_error = p.communicate()
 
         error = main_error.decode(encoding='UTF-8')
         error_matched = re.search('No such file or directory', error)
+
+        logging.debug(error)
 
         if error_matched is not None:
             logging.debug('Path not found')
@@ -110,7 +115,8 @@ class Ssh:
 
     def remote_iterdir(self, host, path):
         # Call out to the remote host
-        p = psutil.Popen(['ssh', host, 'ls', '-Fa', path.as_posix()], stdout=PIPE, stderr=PIPE)
+        escaped_path = '""{}""'.format(path.as_posix().replace(' ', '\\ '))
+        p = psutil.Popen(['ssh', host, 'ls', '-Fa', escaped_path], stdout=PIPE, stderr=PIPE)
         main_output, main_error = p.communicate()
 
         logging.debug(main_error.decode(encoding='UTF-8'))

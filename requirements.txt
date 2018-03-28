@@ -1,0 +1,5 @@
+configobj==5.0.6
+CherryPy==11.0.0
+psutil==3.4.2
+jsonschema==2.6.0
+schedule==0.4.3
