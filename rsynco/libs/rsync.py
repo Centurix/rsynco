@@ -133,7 +133,13 @@ class Rsync:
             try:
                 if proc.name() == 'rsync' and len(proc.children()) == 0:
                     active_log_files.append(self.find_log_file(proc.open_files()))
-                    current_progress, current_speed = self.get_progress(self.find_log_file(proc.open_files()))
+                    open_files = proc.open_files()
+                    logging.debug(open_files)
+                    log_file = self.find_log_file(open_files)
+                    logging.debug(log_file)
+                    current_progress, current_speed = self.get_progress(log_file)
+                    logging.debug(current_progress)
+                    logging.debug(current_speed)
                     tasks.append({
                         'pid': proc.pid,
                         'started': datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
@@ -146,6 +152,8 @@ class Rsync:
                     })
             except psutil.NoSuchProcess:
                 pass  # Probably caught the process terminating before probing for its details, that's ok
+            except psutil.AccessDenied:
+                pass  # Sometimes we just can't even
 
         logging.debug('Active log files:')
         logging.debug(active_log_files)
